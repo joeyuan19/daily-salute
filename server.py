@@ -29,8 +29,7 @@ if __name__ == "__main__":
 
     app = tornado.web.Application(
         [
-            (r'/favicon\.ico', tornado.web.StaticFileHandler, {'path': favicon_path}),
-            (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': static_path}),
+            (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': '/home/joeyuan19/webapps/daily_salute/daily-salute/static'}),
             (r'/', IndexHandler)
 
         ], **settings
