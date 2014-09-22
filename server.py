@@ -17,18 +17,23 @@ def load_index():
     return content
 
 
-
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
         self.write(load_index())
+
+settings = {'debug': True}
+
 
 if __name__ == "__main__":
     tornado.options.parse_command_line()
 
     app = tornado.web.Application(
         [
-            (r'/', IndexHandler)  
-        ],
+            (r'/favicon\.ico', tornado.web.StaticFileHandler, {'path': favicon_path}),
+            (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': static_path}),
+            (r'/', IndexHandler)
+
+        ], **settings
     )
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(options.port)
