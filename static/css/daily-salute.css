@@ -1,0 +1,27 @@
+body {
+    padding-top: 100px;
+}
+.ds-navbar {
+    box-shadow: 0px 10px 10px #555;
+    min-width: 375px;
+}
+.ds-navbar-title {
+    font-size: 150%;
+}
+.ds-navbar-text {
+    color: #0099BB;
+}
+.ds-navbar-text:hover {
+    text-decoration: none;
+}
+
+.ds-post {}
+.ds-post-header {}
+.ds-post-title {
+    font-size: 150%
+}
+.ds-post-date {
+    float: right;
+}
+.ds-post-body {}
+.ds-post-content {}
