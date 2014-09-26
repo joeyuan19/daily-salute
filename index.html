@@ -10,11 +10,14 @@
         <title>Daily Salute by Jillian Entenman</title>
 
         <!-- Bootstrap core CSS -->
-        <link href="static/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/dist/css/bootstrap.min.css" rel="stylesheet">
 
         <!-- Custom styles for this template -->
-        <link href="static/css/daily-salute.css" rel="stylesheet">
-
+        <link href="/static/css/daily-salute.css" rel="stylesheet">
+        
+        <!-- Custom javascript -->
+        <script type="text/javascript" src="/static/js/daily-salute.js"></script>
+        
     </head>
     <body>
         <!-- Nav Bar -->
@@ -56,31 +59,62 @@
                             </a>
                         </li>
                     </ul>
-                </div><!--/.nav-collapse -->
+                </div>
             </div>
         </div>
         <!-- Resizable Content -->
         <div class="container">
             <div class="row">
+                <div class="col-xs-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8 col-centered">
+                    <div class="pager">
+                        <button class="btn btn-default ds-btn" onClick="link('/poem/1')">
+                            <span class="glyphicon glyphicon-backward"></span><span class="hidden-xs"> Oldest</span>
+                        </button>
+                        <button class="btn btn-default ds-btn" onClick="link('/poem/{{prev_page}}')">
+                            <span class="glyphicon glyphicon-chevron-left"></span><span class=""> Prev<span class="hidden-xs">ious</span></span>
+                        </button>
+                        <button class="btn btn-default ds-btn" onClick="link('/poem/random')">
+                            Random
+                        </button>
+                        <button class="btn btn-default ds-btn" onClick="link('poem/{{next_page}}')">
+                            Next <span class="glyphicon glyphicon-chevron-right"></span>
+                        </button>
+                        <button class="btn btn-default ds-btn" onClick="link('/')">
+                            <span class="hidden-xs">Newest </span><span class="glyphicon glyphicon-forward"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div id="entry-container" class="col-xs-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8 col-centered">
-                    {{page_content}} 
+                    {{page_content}}
                 </div>
             </div>
             <div class="row">
                 <div class="col-xs-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8 col-centered">
-                    <ul class="pager">
-                        <li class="previous"><a href="#">&larr;&larr; Oldest</a></li>
-                        <li class=""><a href="#">&larr; Prev</a></li>
-                        <li class=""><a href="#">Random</a></li>
-                        <li class=""><a href="#">Next &rarr;</a></li>
-                        <li class="next"><a href="#">Newest &rarr;&rarr;</a></li>
-                    </ul>
+                    <div class="pager">
+                        <button class="btn btn-default ds-btn" onClick="link('/poem/1')">
+                            <span class="glyphicon glyphicon-backward"></span><span class="hidden-xs"> Oldest</span>
+                        </button>
+                        <button class="btn btn-default ds-btn" onClick="link('/poem/{{prev_page}}')">
+                            <span class="glyphicon glyphicon-chevron-left"></span><span class=""> Prev<span class="hidden-xs">ious</span></span>
+                        </button>
+                        <button class="btn btn-default ds-btn" onClick="link('/poem/random')">
+                            Random
+                        </button>
+                        <button class="btn btn-default ds-btn" onClick="link('/poem/{{next_page}}')">
+                            <span class="">Next </span><span class="glyphicon glyphicon-chevron-right"></span>
+                        </button>
+                        <button class="btn btn-default ds-btn" onClick="link('/')">
+                            <span class="hidden-xs">Newest </span><span class="glyphicon glyphicon-forward"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
         <div id="end-scripts">
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-            <script src="static/dist/js/bootstrap.min.js"></script>
+            <script src="/static/dist/js/bootstrap.min.js"></script>
 
         </div>
     </body>

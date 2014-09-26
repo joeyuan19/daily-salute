@@ -1,5 +1,8 @@
 import os.path
 import re
+import random
+import traceback
+
 import tornado.httpserver
 import tornado.ioloop
 import tornado.options
@@ -7,80 +10,74 @@ import tornado.web
 
 from tornado.options import define, options
 
+from db import Poem, getLatestID
 
-def load_index():
-    with open('index.html','r') as f:
-        content = ''.join(i for i in f)
-    return renderHTML(content,{'page_content':load_last_poem(),'toc_content':'<b>August</b>'})
+def get_poem(poem_id):
+    try:
+        poem = Poem.load(poem_id).getData()
+        if len(poem['poem_title']) == 0:
+            poem['poem_title'] = poem['poem_date']
+            poem['poem_date'] = ''
+        return poem
+    except:
+        print traceback.format_exc()
+        return {}
 
-def renderFromHTMLFile(template_path,poem):
-    with open(template_path,'r') as f:
-        template = ''.join(i for i in f)
-    for key,val in poem.iteritems():
-        template = re.sub(r'\{\{'+key+'\}\}',val,template)
-    return template
+def render_poem(poem_id):
+    return renderFromHTMLFile('poem.tmpl.html',get_poem(poem_id))
 
-def renderHTML(template,poem):
-    for key,val in poem.iteritems():
-        template = re.sub(r'\{\{'+key+'\}\}',val,template)
-    return template
+def render_page(poem_id):
+    if poem_id == 1:
+        prev_page = 1
+    else:
+        prev_page = poem_id - 1
+    if poem_id == getLatestID():
+        next_page = getLatestID()
+    else:
+        next_page = poem_id + 1
     
+    return renderFromHTMLFile('index.html',{
+        'page_content':render_poem(poem_id),
+        'prev_page':prev_page,
+        'next_page':next_page
+    })
 
-def load_last_poem():
-    poems = [
-        {
-            'post_title':'post 1',
-            'post_date':'9/22/14',
-            'post_content':'This is the first line,<br/>it doesn\'t exactly rhyme.<br/>Just deal with it.</br>end'
-        },
-        {
-            'post_title':'post 2',
-            'post_date':'9/21/14',
-            'post_content':'A second poem is just masochism'
-        },
-        {
-            'post_title':'post 1',
-            'post_date':'9/20/14',
-            'post_content':'This is the next <i>poem</i>'
-        }
-    ]
-    return renderFromHTMLFile('post.tmpl.html',poems[0])
+def renderFromHTMLFile(filepath,variables):
+    with open(filepath,'r') as f:
+        template = ''.join(i for i in f)
+    return renderHTML(template,variables)
 
-
-def load_poem(poem_id):
-    poems = [
-        {   
-            'post_title':'post 1',
-            'post_date':'9/22/14',
-            'post_content':'This is the first line,<br/>it doesn\'t exactly rhyme.<br/>Just deal with it.</br>end'
-        },
-        {
-            'post_title':'post 2',
-            'post_date':'9/21/14',
-            'post_content':'A second poem is just masochism'
-        },
-        {
-            'post_title':'post 1',
-            'post_date':'9/20/14',
-            'post_content':'This is the next <i>poem</i>'
-        }
-    ]
-    return ''.join(renderFromHTMLFile('post.tmpl.html',poem) for poem in poems)
-
-
-
+def renderHTML(template,variables):
+    for key,val in variables.iteritems():
+        template = re.sub(r'\{\{'+str(key)+'\}\}',str(val),template)
+    template = re.sub(r'\{\{.*?\}\}','',template)
+    return template
 
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write(load_index())
+        self.write(render_page(getLatestID()))
 
-class AjaxHandler(tornado.web.RequestHandler):
+class PoemHandler(tornado.web.RequestHandler):
+    def get(self,poem_id):
+        try:
+            poem_id = int(poem_id)
+            if poem_id > getLatestID():
+                print 'redirect greater than limit'
+                self.redirect('/poem/'+str(getLatestID()))
+            if poem_id < 1:
+                print 'redirect less than limit'
+                self.redirect('/poem/1')
+            page_content = render_page(poem_id)
+            print 'redirect greater than limit'
+            self.write(page_content)
+        except:
+            print traceback.format_exc()
+            self.redirect('/')
+
+class RandomPoemHandler(tornado.web.RequestHandler):
     def get(self):
-        pass
-
-    def post(self):
-        pass
-
+        rand_poem = int(round(1. + (getLatestID()-1)*random.random()))
+        self.redirect('/poem/'+str(rand_poem))
 
 if __name__ == "__main__":
     define("port", default=15210, help="run on the given port", type=int)
@@ -94,8 +91,9 @@ if __name__ == "__main__":
     app = tornado.web.Application(
         [
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path':static_file_path}),
-            (r'/', IndexHandler)
-
+            (r'/poem/random', RandomPoemHandler),
+            (r'/poem/(.*)', PoemHandler),
+            (r'/', IndexHandler),
         ], debug=options.local
     )
     http_server = tornado.httpserver.HTTPServer(app)

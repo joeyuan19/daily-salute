@@ -1,5 +1,6 @@
 body {
-    padding-top: 100px;
+    padding-top: 60px;
+    min-width: 375px;
 }
 .ds-navbar {
     box-shadow: 0px 10px 10px #555;
@@ -25,3 +26,11 @@ body {
 }
 .ds-post-body {}
 .ds-post-content {}
+
+
+.ds-btn {
+    color: #0099BB;
+}
+
+
+
