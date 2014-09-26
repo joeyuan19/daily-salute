@@ -14,13 +14,27 @@ class Poem(object):
         if poem is None:
             raise PoemNotFoundException("Poem " + str(poem_id) + " Not found")
         return cls(poem[1],poem[2],poem[3],poem[4],new=False,poem_id=poem[0])
-    
+
+    @classmethod
+    def getMaxID(cls):
+        return getMaxID()
+
+    @classmethod
+    def getMinID(cls):
+        return getMinID()
+
     def save(self):
         if self.new:
             insert(self)
             self.new = False
         else:
             update(self)
+    
+    def saveAndPublish(self):
+        self.poem_id = getMaxID()+1
+    
+    def saveAsDraft(self):
+        self.poem_id = getMinID()-1
     
     def getData(self):
         return {
@@ -38,13 +52,22 @@ class Poem(object):
         self.creation_date = creation_date
         self.poem = poem
         self.image_path = image_path
-    
 
-# DB Calls
+
+class User(object):
+    @classmethod
+    def login(cls,username,password):
+        pass
+
+    @classmethod
+    def logout(cls,username):
+        pass
 
 def loadpword():
     with open('db_pass.txt','r') as f:
         return ''.join(i.strip() for i in f).strip()
+
+# DB Calls
 
 def reset():
     execute(_reset)
@@ -68,6 +91,13 @@ def _init(cur):
         image_path varchar(128)
     )
     """)
+    cur.execute("""
+    CREATE TABLE usernames (
+        username varchar(128),
+        password varchar(512)
+    )
+    """)
+
 
 def insert(poem):
     return execute(_insert,poem) 
@@ -75,7 +105,7 @@ def insert(poem):
 def _insert(cur,poem):
     cur.execute("""
     INSERT INTO poems VALUES (%s,%s,%s,%s,%s)
-    """,(getLatestID()+1,poem.title,poem.creation_date,poem.poem,poem.image_path))
+    """,(poem.poem_id,poem.title,poem.creation_date,poem.poem,poem.image_path))
 
 def update(poem):
     execute(_update,poem)
@@ -87,10 +117,12 @@ def _update(cur,poem):
     title='%s',
     creation_date='%s',
     poem='%s',
-    image_path='%s'
+    image_path='%s',
+    poem_id=%s
     WHERE poem_id=%s
-    """,(poem.title,poem.creation_date,poem.poem,poem.image_path,poem.poem_id))
-    
+    """,(poem.title,poem.creation_date,poem.poem,poem.image_path,poem.poem_id,poem.poem_id))
+
+
 def pullPoem(poem_id):
     try:
         return execute(_pullPoem,poem_id)
@@ -114,21 +146,35 @@ def _pullAll(cur):
     return cur.fetchall()
 
 
-def getLatestID():
+def getMaxID():
     try:
-        _id = execute(_getLatestID)[0]
+        _id = execute(_getMaxID)[0]
         if _id is None:
             return 0
         return _id
     except IndexError:
         return 0
 
-def _getLatestID(cur):
+def _getMaxID(cur):
     cur.execute("""
     SELECT MAX(poem_id) FROM poems
     """)
     return cur.fetchone()
 
+def getMinID():
+    try:
+        _id = execute(_getMinID)[0]
+        if _id is None or _id > 0:
+            return 0
+        return _id
+    except IndexError:
+        return 0
+
+def _getMinID(cur):
+    cur.execute("""
+    SELECT MIN(poem_id) FROM poems
+    """)
+    return cur.fetchone()
 
 def pullAllTitlesAndDates():
     pass
