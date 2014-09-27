@@ -76,7 +76,7 @@
                         <button class="btn btn-default ds-btn" onClick="link('/poem/random')">
                             Random
                         </button>
-                        <button class="btn btn-default ds-btn" onClick="link('poem/{{next_page}}')">
+                        <button class="btn btn-default ds-btn" onClick="link('/poem/{{next_page}}')">
                             Next <span class="glyphicon glyphicon-chevron-right"></span>
                         </button>
                         <button class="btn btn-default ds-btn" onClick="link('/')">
@@ -87,7 +87,7 @@
             </div>
             <div class="row">
                 <div id="entry-container" class="col-xs-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8 col-centered">
-                    {{page_content}}
+                    {% include 'poem.tmpl.html' %}
                 </div>
             </div>
             <div class="row">

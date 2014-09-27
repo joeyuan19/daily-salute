@@ -1,4 +1,7 @@
 import psycopg2
+import random
+
+from security import encrypt, decrypt
 
 DB_ADDR = '127.0.0.1'
 
@@ -61,6 +64,10 @@ class User(object):
 
     @classmethod
     def logout(cls,username):
+        pass
+
+    @classmethod
+    def create(cls,username,password):
         pass
 
 def loadpword():
@@ -177,7 +184,14 @@ def _getMinID(cur):
     return cur.fetchone()
 
 def pullAllTitlesAndDates():
-    pass
+    return execute(_pullAllTitlesAndDates)
+
+def _pullAllTitlesAndDates(cur):
+    cur.execute("""
+    SELECT (title,creation_date) FROM poems
+    """)
+    return cur.fetchall()
+    
 
 def execute(f,*args):
     conn = psycopg2.connect(host=DB_ADDR,

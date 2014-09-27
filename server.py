@@ -7,6 +7,7 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
+import tornado.template
 
 from tornado.options import define, options
 
@@ -27,11 +28,7 @@ def get_poem(poem_id):
             poem['poem_date'] = ''
         return poem
     except:
-        print traceback.format_exc()
         return {}
-
-def render_poem(poem_id):
-    return renderFromHTMLFile('poem.tmpl.html',get_poem(poem_id))
 
 def render_page(poem_id):
     if poem_id == 1:
@@ -42,23 +39,11 @@ def render_page(poem_id):
         next_page = Poem.getMaxID()
     else:
         next_page = poem_id + 1
-    
-    return renderFromHTMLFile('index.html',{
-        'page_content':render_poem(poem_id),
-        'prev_page':prev_page,
-        'next_page':next_page
-    })
-
-def renderFromHTMLFile(filepath,variables):
-    with open(filepath,'r') as f:
-        template = ''.join(i for i in f)
-    return renderHTML(template,variables)
-
-def renderHTML(template,variables):
-    for key,val in variables.iteritems():
-        template = re.sub(r'\{\{'+str(key)+'\}\}',str(val),template)
-    template = re.sub(r'\{\{.*?\}\}','',template)
-    return template
+    poem = get_poem(poem_id)
+    poem['prev_page'] = prev_page
+    poem['next_page'] = next_page
+    loader = tornado.template.Loader('./')
+    return loader.load('index.html').generate(**poem)
 
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
@@ -74,8 +59,7 @@ class PoemHandler(tornado.web.RequestHandler):
             if poem_id < 1:
                 self.redirect('/poem/1')
                 return
-            page_content = render_page(poem_id)
-            self.write(page_content)
+            self.write(render_page(poem_id))
         except:
             print traceback.format_exc()
             self.redirect('/')
@@ -105,10 +89,8 @@ class AuthLogoutHandler(AuthenticatedHandler):
 
 class AuthLoginHandler(AuthenticatedHandler):
     def get(self):
-        self.write('<html><body><form action="/auth/login" method="post">' +
-                   'Name: <input type="text" name="name">' +
-                   '<input type="submit" value="Sign in">' +
-                   '</form></body></html>')
+        t = self.render('admin.html')
+        self.write(t)
 
     def post(self):
         self.set_secure_cookie("user", self.get_argument("name"))

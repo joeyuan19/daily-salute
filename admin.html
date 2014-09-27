@@ -11,6 +11,11 @@
         
     </head>
     <body>
+            <html><body><form action="/auth/login" method="post">
+                   {% module xsrf_form_html() %}
+                   Name: <input type="text" name="name">
+                   <input type="submit" value="Sign in">
+                   </form></body></html>
         
     </body>
 </html>
