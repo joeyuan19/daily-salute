@@ -8,10 +8,9 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 import tornado.template
-
 from tornado.options import define, options
 
-from db import Poem
+from db import Poem, User
 
 DEBUG = True
 
@@ -30,7 +29,7 @@ def get_poem(poem_id):
     except:
         return {}
 
-def render_page(poem_id):
+def load_page_vars(poem_id):
     if poem_id == 1:
         prev_page = 1
     else:
@@ -42,12 +41,11 @@ def render_page(poem_id):
     poem = get_poem(poem_id)
     poem['prev_page'] = prev_page
     poem['next_page'] = next_page
-    loader = tornado.template.Loader('./')
-    return loader.load('index.html').generate(**poem)
+    return poem 
 
 class IndexHandler(tornado.web.RequestHandler):
     def get(self):
-        self.write(render_page(Poem.getMaxID()))
+        self.render('index.html',**load_page_vars(Poem.getMaxID()))
 
 class PoemHandler(tornado.web.RequestHandler):
     def get(self,poem_id):
@@ -59,7 +57,7 @@ class PoemHandler(tornado.web.RequestHandler):
             if poem_id < 1:
                 self.redirect('/poem/1')
                 return
-            self.write(render_page(poem_id))
+            self.render('index.html',**load_page_vars(poem_id))
         except:
             print traceback.format_exc()
             self.redirect('/')
@@ -71,47 +69,71 @@ class RandomPoemHandler(tornado.web.RequestHandler):
 
 class AuthenticatedHandler(tornado.web.RequestHandler):
     def get_current_user(self):
-        return self.get_secure_cookie("user")
+        return self.get_secure_cookie("DS_SESSION_TOKEN")
 
 class AdminHandler(AuthenticatedHandler):
     @tornado.web.authenticated
     def get(self):
         name = tornado.escape.xhtml_escape(self.current_user)
-        self.write("Hello, " + name)
+        self.render('admin.html')
 
 class AdminEditHandler(AuthenticatedHandler):
+    @tornado.web.authenticated
     def get(self):
         pass
 
 class AuthLogoutHandler(AuthenticatedHandler):
+    @tornado.web.authenticated
     def get(self):
         pass
 
 class AuthLoginHandler(AuthenticatedHandler):
     def get(self):
-        t = self.render('admin.html')
-        self.write(t)
+        opts = {"error_user":False,"error_password":False}
+        self.render('admin_login.html',**opts)
 
     def post(self):
-        self.set_secure_cookie("user", self.get_argument("name"))
-        self.redirect("/admin")
+        opts = {"error_user":False,"error_password":False}
+        try:
+            uname = self.get_argument("username")
+        except tornado.web.MissingArgumentError:
+            opts["error_user"] = True
+            opts["error_message"] = "User '"+uname+"' does not exist"
+            self.render('admin_login.html',**opts)
+        try:
+            passw = self.get_argument("password")
+        except tornado.web.MissingArgumentError:
+            opts["error_password"] = True
+            opts["error_message"] = "Invalid password"
+            self.render('admin_login.html',**opts)
+        token,err = User.login(uname,passw)
+        if token is not None: 
+            self.set_secure_cookie("DS_SESSION_TOKEN", token)
+            self.redirect("/admin")
+        else:
+            opts["error_"+err] = True
+            opts["error_message"] = (lambda x: "User '"+uname+"' does not exist" if x == "user" else "Incorrect password")(err)
+            self.render('admin_login.html',**opts)
 
 if __name__ == "__main__":
     define("port", default=15210, help="run on the given port", type=int)
     define("local", default=False, help="designates whether instance is run on the local/server", type=bool)
     tornado.options.parse_command_line()
-
-    static_file_path = '/home/joeyuan19/webapps/daily_salute/daily-salute/static'
-    if options.local:
-        static_file_path = './static'
     
-    settings = {
+    static_path = os.path.join(os.curdir, "static") 
+    template_path = os.path.join(os.curdir, "templates") 
+
+    app_settings = {
         "debug":DEBUG,
         "cookie_secret":load_cookie_secret(),
         "login_url":"/auth/login",
         "xsrf_cookies":True,
+        "template_path":template_path
     }
-    
+    server_settings = {
+     
+    }
+
     app = tornado.web.Application(
         [
             (r'/auth/login',AuthLoginHandler),
@@ -119,13 +141,13 @@ if __name__ == "__main__":
             (r'/admin',AdminHandler),
             (r'/admin/edit/(.*)',AdminEditHandler),
             (r'/admin',AdminHandler),
-            (r'/static/(.*)', tornado.web.StaticFileHandler, {'path':static_file_path}),
+            (r'/static/(.*)', tornado.web.StaticFileHandler, {'path':static_path}),
             (r'/poem/random', RandomPoemHandler),
             (r'/poem/(.*)', PoemHandler),
             (r'/', IndexHandler),
-        ], **settings
+        ], **app_settings
     )
-    http_server = tornado.httpserver.HTTPServer(app)
+    http_server = tornado.httpserver.HTTPServer(app,**server_settings)
     http_server.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
 

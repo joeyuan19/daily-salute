@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Daily poetry from Jillian Entenman">
+        <meta name="author" content="Jillian Entenman">
+
+        <title>Title by Author</title>
+
+        <!-- Bootstrap core CSS -->
+        <link href="/static/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+        <!-- Admin CSS -->
+        <link rel="stylesheet" href="/static/css/daily-salute.css"/>
+        <link rel="stylesheet" href="/static/css/admin.css"/>
+        
+        <!-- Admin Javascript -->
+        <script type="type/javascript" src="/static/daily-salute.js"></script>
+        <script type="type/javascript" src="/static/admin.js"></script>
+        
+    </head>
+    <body>
+        <div class="navbar ds-navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="navbar-brand">
+                        <a class="ds-navbar-text ds-navbar-title" href="#">
+                            TITLE_HERE
+                            <small>
+                                    Administration
+                            </small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-offset-2 col-xs-8 col-md-offset-3 col-md-6 col-lg-offset-4 col-lg-4 col-centered">
+                    <form role="form" class="ds-form" action="/auth/login" method="post">
+                        {% module xsrf_form_html() %}
+                        <div class="form-group">
+                        </div>
+                        <div class="form-group {% if error_user %}has-error{% end %}">
+                            <input class="form-control ds-form-input" type="text" name="username" placeholder="Username"/>
+                            {% if error_user %}
+                            <p class="help-block ds-form-error-help-text">{{error_message}}</p>    
+                            {% end %}
+                        </div>
+                        <div class="form-group {% if error_password %}has-error{% end %}">
+                            <input class="form-control ds-form-input" type="password" name="password" placeholder="Password"/>
+                            {% if error_password %}
+                            <p class="help-block ds-form-error-help-text">{{error_message}}</p> 
+                            {% end %}
+                        </div>
+                        <div class="form-group">
+                            <input class="btn btn-primary ds-form-btn" type="submit" value="Sign in"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="end-scripts">
+            <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+            <script type="text/javascript" src="/static/dist/js/bootstrap.min.js"></script>
+        </div>
+    </body>
+</html>

@@ -1,7 +1,6 @@
 import psycopg2
-import random
 
-from security import encrypt, decrypt
+from security import encrypt, decrypt, session_token
 
 DB_ADDR = '127.0.0.1'
 
@@ -28,16 +27,19 @@ class Poem(object):
 
     def save(self):
         if self.new:
+            self.poem_id = getMinID()-1
             insert(self)
             self.new = False
         else:
             update(self)
     
-    def saveAndPublish(self):
-        self.poem_id = getMaxID()+1
-    
+    def publish(self):
+        if self.poem_id <= 0:
+            self.poem_id = getMaxID()+1
+        self.save()
+
     def saveAsDraft(self):
-        self.poem_id = getMinID()-1
+        self.save()
     
     def getData(self):
         return {
@@ -48,7 +50,7 @@ class Poem(object):
             'poem_image_path':self.image_path,
         }
     
-    def __init__(self,title,creation_date,poem,image_path,new=True,poem_id=-1):
+    def __init__(self,title,creation_date,poem,image_path,new=True,poem_id=0):
         self.new = new
         self.poem_id = poem_id
         self.title = title
@@ -60,15 +62,15 @@ class Poem(object):
 class User(object):
     @classmethod
     def login(cls,username,password):
-        pass
+        return login(username,password)
 
     @classmethod
-    def logout(cls,username):
-        pass
+    def logout(cls,username,token):
+        return logout(username,token) is not None
 
     @classmethod
     def create(cls,username,password):
-        pass
+        create_user(username,password)
 
 def loadpword():
     with open('db_pass.txt','r') as f:
@@ -77,34 +79,100 @@ def loadpword():
 # DB Calls
 
 def reset():
-    execute(_reset)
-    init()
+    reset_poems()
+    reset_users()
 
-def _reset(cur):
+def reset_poems():
+    execute(_reset_poems)
+    init_poems()
+
+def _reset_poems(cur):
     cur.execute("""
     DROP TABLE poems
     """)
 
-def init():
-    execute(_init)
+def reset_users():
+    execute(_reset_users)
+    init_users()
 
-def _init(cur):
+def _reset_users(cur):
+    cur.execute("""
+    DROP TABLE users 
+    """)
+
+def init():
+    init_poems()
+    init_users()
+
+def init_poems():
+    execute(_init_poems)
+
+def _init_poems(cur):
     cur.execute("""
     CREATE TABLE poems (
         poem_id int CONSTRAINT firstkey PRIMARY KEY,
         title varchar(128),
         creation_date varchar(32),
         poem text,
-        image_path varchar(128)
-    )
-    """)
-    cur.execute("""
-    CREATE TABLE usernames (
-        username varchar(128),
-        password varchar(512)
+        image_path varchar(128),
     )
     """)
 
+def init_users():
+    execute(_init_users)
+
+def _init_users(cur):
+    cur.execute("""
+    CREATE TABLE users (
+        username varchar(128),
+        password text,
+        token text
+    )
+    """)
+
+def create_user(username,password):
+    p = encrypt(password)
+    execute(_create_user,username,p)
+
+def _create_user(cur,username,password):
+    cur.execute("""
+    INSERT INTO users VALUES (%s,%s)
+    """,(username,password))
+
+def login(user,pword):
+    return execute(_login,user,pword)
+
+def _login(cur,user,pword):
+    cur.execute("""
+    SELECT password FROM users WHERE username=%s
+    """,(user,))
+    try:
+        p = cur.fetchone()[0]
+    except:
+        return None,"user"
+    if decrypt(p) == pword:
+        token = session_token()
+        cur.execute("""
+        UPDATE users SET token=%s WHERE username=%s
+        """,(token,user))
+        return token,""
+    else:
+        return None,"password"
+
+def logout(user,token):
+    return execute(_logout,user,token)
+
+def _logout(cur,user,token):
+    cur.execute("""
+    SELECT token FROM users WHERE username=%s
+    """,(user,))
+    if cur.fetchone()[0] == token:
+        cur.execute("""
+        UPDATE users SET token='' WHERE user=%s
+        """,(user,))
+        return 1
+    else:
+        return None
 
 def insert(poem):
     return execute(_insert,poem) 
@@ -121,10 +189,10 @@ def _update(cur,poem):
     cur.execute("""
     UPDATE poems 
     SET (
-    title='%s',
-    creation_date='%s',
-    poem='%s',
-    image_path='%s',
+    title=%s,
+    creation_date=%s,
+    poem=%s,
+    image_path=%s,
     poem_id=%s
     WHERE poem_id=%s
     """,(poem.title,poem.creation_date,poem.poem,poem.image_path,poem.poem_id,poem.poem_id))

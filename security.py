@@ -1,8 +1,14 @@
+import random
+
 VALID_CHARS = '1234567890-=!@#$%^&*()_+`~qwertyuiop[]\\asdfghjkl;\'zxcvbnm,./QWERTYUIOP{}|ASDFGHJKL"ZXCVBNM<>?'
 HASH_LENGTH = 6
+SESSION_TOKEN_LENGTH = 256
 
 def randchar():
     return random.choice(VALID_CHARS)
+
+def session_token():
+    return ''.join(randchar() for i in xrange(256)) 
 
 def super_hash(s):
     h = ''
