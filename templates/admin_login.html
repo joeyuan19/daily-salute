@@ -7,7 +7,7 @@
         <meta name="description" content="Daily poetry from Jillian Entenman">
         <meta name="author" content="Jillian Entenman">
 
-        <title>Title by Author</title>
+        <title>Daily Salute Administration</title>
 
         <!-- Bootstrap core CSS -->
         <link href="/static/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -33,7 +33,7 @@
                     </button>
                     <div class="navbar-brand">
                         <a class="ds-navbar-text ds-navbar-title" href="#">
-                            TITLE_HERE
+                            Daily Salute
                             <small>
                                     Administration
                             </small>
@@ -44,22 +44,27 @@
         </div>
         <div class="container">
             <div class="row">
+                {% if alert == "logout" %}
+                <div class="alert alert-success alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <b>See you later!</b> Successfully logged out
+                    </div>
+                {% elif alert == "error" %}
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <b>Error!</b> {{error_message}}
+                    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                </div>
+                {% end %}
                 <div class="col-xs-offset-2 col-xs-8 col-md-offset-3 col-md-6 col-lg-offset-4 col-lg-4 col-centered">
                     <form role="form" class="ds-form" action="/auth/login" method="post">
                         {% module xsrf_form_html() %}
                         <div class="form-group">
                         </div>
-                        <div class="form-group {% if error_user %}has-error{% end %}">
-                            <input class="form-control ds-form-input" type="text" name="username" placeholder="Username"/>
-                            {% if error_user %}
-                            <p class="help-block ds-form-error-help-text">{{error_message}}</p>    
-                            {% end %}
+                        <div class="form-group {% if error == 'user' %}has-error{% end %}">
+                            <input id="username-field" class="form-control ds-form-input" type="text" name="username" placeholder="Username"/>
                         </div>
-                        <div class="form-group {% if error_password %}has-error{% end %}">
-                            <input class="form-control ds-form-input" type="password" name="password" placeholder="Password"/>
-                            {% if error_password %}
-                            <p class="help-block ds-form-error-help-text">{{error_message}}</p> 
-                            {% end %}
+                        <div class="form-group {% if error == 'password' %}has-error{% end %}">
+                            <input id="password-field" class="form-control ds-form-input" type="password" name="password" placeholder="Password"/>
                         </div>
                         <div class="form-group">
                             <input class="btn btn-primary ds-form-btn" type="submit" value="Sign in"/>
@@ -69,7 +74,7 @@
             </div>
         </div>
         <div id="end-scripts">
-            <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+            <script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
             <script type="text/javascript" src="/static/dist/js/bootstrap.min.js"></script>
         </div>
     </body>

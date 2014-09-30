@@ -7,21 +7,75 @@
         <meta name="description" content="Daily poetry from Jillian Entenman">
         <meta name="author" content="Jillian Entenman">
 
-        <title>TITLE_HERE Admin Page</title>
+        <title>Administration | Daily Salute by Jillian Entenman</title>
 
         <!-- Bootstrap core CSS -->
         <link href="/static/dist/css/bootstrap.min.css" rel="stylesheet">
     
         <!-- Admin CSS -->
+        <link rel="stylesheet" href="/static/css/daily-salute.css"/>
         <link rel="stylesheet" href="/static/css/admin.css"/>
         
         <!-- Admin Javascript -->
+        <script type="type/javascript" src="/static/daily-salute.js"></script>
         <script type="type/javascript" src="/static/admin.js"></script>
         
     </head>
     <body>
+        <div class="navbar ds-navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="navbar-brand">
+                        <a class="ds-navbar-text ds-navbar-title" href="#">
+                            Daily Salute
+                            <small>
+                                    Administration
+                            </small>
+                        </a>
+                    </div>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#poems">
+                                <span class="ds-navbar-text">Manage Poems</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#manage">
+                                <span class="ds-navbar-text">Manage Pages</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/auth/logout">
+                                <span class="ds-navbar-text">Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Resizable Content -->
+        <div class="container">
+            <div class="col-xs-offset-2 col-xs-8 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8 col-centered">
+                <div class="row">
+                    <div class="col-xs-offset-2 col-xs-8 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8 col-centered">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-offset-2 col-xs-8 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8 col-centered">
+                    </div>
+                </div>
+            </div>
+        </div>
         <div id="end-scripts">
-            <script type="text/javascript" src="/static/js/jquery.min.js"></script>
+            <script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
             <script type="text/javascript" src="/static/dist/js/bootstrap.min.js"></script>
         </div>
     </body>
