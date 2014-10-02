@@ -5,13 +5,12 @@
         <title>Tiny, opensource, Bootstrap WYSIWYG rich text editor from MindMup</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="keywords" content="opensource rich wysiwyg text editor jquery bootstrap execCommand html5" />
-        <meta name="description" content="This tiny jQuery Bootstrap WYSIWYG plugin turns any DIV into a HTML5 rich text editor" />
-        
+        <meta name="description" content="Daily Poetry by Jillian Entenman" />
+        <title>Poem Editor | Daily Salute by Jillian Entenman</title>
         <!-- CSS -->
         <link href="/static/external/google-code-prettify/prettify.css" rel="stylesheet">
         <link href="/static/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="/static/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet">
-        <link href="/static/external/index.css" rel="stylesheet">
         <link href="/static/css/daily-salute.css" rel="stylesheet"/>
         <link href="/static/css/editor.css" rel="stylesheet"/>
         
@@ -46,7 +45,7 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li>
                             <a href="#poems">
-                                <span class="ds-navbar-text">Manage Poems</span>
+                                <span class="ds-navbar-text active">Manage Poems</span>
                             </a>
                         </li>
                         <li>
@@ -64,6 +63,8 @@
             </div>
         </div>
         <div class="container">
+            <div id="alert-row" class="row">
+            </div>
             <div class="row">
                 <div class="input-group">
                     <label for="poem-title" class="input-group-addon">Title</label>

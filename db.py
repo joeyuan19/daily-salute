@@ -247,12 +247,7 @@ def update(poem):
 def _update(cur,poem):
     cur.execute("""
     UPDATE poems 
-    SET (
-        title=%s,
-        creation_date=%s,
-        poem=%s,
-        poem_id=%s
-    )
+    SET (title, creation_date, poem, poem_id) = (%s,%s,%s,%s)
     WHERE poem_id=%s
     """,(poem.title,
         poem.creation_date,
