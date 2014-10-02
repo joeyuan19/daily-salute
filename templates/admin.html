@@ -17,9 +17,9 @@
         <link rel="stylesheet" href="/static/css/admin.css"/>
         
         <!-- Admin Javascript -->
-        <script type="type/javascript" src="/static/daily-salute.js"></script>
-        <script type="type/javascript" src="/static/admin.js"></script>
-        
+        <script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
+        <script type="text/javascript" src="/static/dist/js/bootstrap.min.js"></script>
+        <script type="type/javascript" src="/static/js/admin.js"></script>
     </head>
     <body>
         <div class="navbar ds-navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
@@ -65,18 +65,77 @@
         <div class="container">
             <div class="col-xs-offset-2 col-xs-8 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8 col-centered">
                 <div class="row">
+                {% if len(poems) > 0 %}
                     <div class="col-xs-offset-2 col-xs-8 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8 col-centered">
+                        <div class="panel panel-default">
+                            <!-- Default panel contents -->
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                        <h3 class=""><b>Poems</b></h3>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+                                        <button class="btn btn-success">Create</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Table -->
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Title</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for poem in poems %}
+                                    <tr>
+                                        <td>{{poem["poem_id"]}}</td>
+                                        <td>{{poem["date"]}}</td>
+                                        <td>{{poem["title"]}}</td>
+                                        <td><button class="btn btn-primary" onclick="link('/admin/edit/poem/{{poem["poem_id"]}}')">Edit</button></td>
+                                    </tr>
+                                    {% end %}
+                                </tbody>
+                            </table>
+                        </div> 
                     </div>
-                </div>
-                <div class="row">
+                {% end %}
+                {% if len(drafts) > 0 %}
                     <div class="col-xs-offset-2 col-xs-8 col-md-offset-2 col-md-8 col-lg-offset-2 col-lg-8 col-centered">
+                        <div class="panel panel-default">
+                            <!-- Default panel contents -->
+                            <div class="panel-heading"><h2>Drafts</h2></div>
+                            <!-- Table -->
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Date</th>
+                                        <th>Title</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for poem in drafts %}
+                                    <tr>
+                                        <td>{{poem["poem_id"]}}</td>
+                                        <td>{{poem["date"]}}</td>
+                                        <td>{{poem["title"]}}</td>
+                                        <td><button class="btn btn-primary" onclick="link('/admin/edit/draft/{{poem["poem_id"]}}')">Edit</button></td>
+                                    </tr>
+                                    {% end %}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                {% end %}
                 </div>
             </div>
         </div>
         <div id="end-scripts">
-            <script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
-            <script type="text/javascript" src="/static/dist/js/bootstrap.min.js"></script>
         </div>
     </body>
 </html>

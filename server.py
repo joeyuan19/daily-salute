@@ -85,8 +85,20 @@ class AuthenticatedHandler(tornado.web.RequestHandler):
 class AdminHandler(AuthenticatedHandler):
     @tornado.web.authenticated
     def get(self):
-        name = tornado.escape.xhtml_escape(self.current_user)
-        self.render('admin.html')
+        poems = [
+            {
+                "poem_id":i[0],
+                "title":i[1],
+                "date":i[2],
+            } for i in Poem.getAllPoems()]
+        drafts = [
+            {
+                "poem_id":i[0],
+                "title":i[1],
+                "date":i[2],
+            } for i in Poem.getAllDrafts()]
+        opts = {'poems':poems,'drafts':drafts}
+        self.render('admin.html',**opts)
 
 class AdminEditHandler(AuthenticatedHandler):
     @tornado.web.authenticated
@@ -138,7 +150,7 @@ class AuthLoginHandler(AuthenticatedHandler):
                 opts["alert"] = "logout"
         except tornado.web.MissingArgumentError:
             pass
-        self.render('admin_login.html',**opts)
+        self.render('login.html',**opts)
 
     def post(self):
         opts = {"error":"none","error_message":"","alert":"none"}
@@ -149,7 +161,7 @@ class AuthLoginHandler(AuthenticatedHandler):
             opts["error"] = "user"
             opts["alert"] = "user"
             opts["error_message"] = "User field cannot be empty"
-            self.render('admin_login.html',**opts)
+            self.render('login.html',**opts)
         try:
             passw = self.get_argument("password")
             if len(passw) == 0: raisetornado.web.MissingArgumentError()
@@ -157,7 +169,7 @@ class AuthLoginHandler(AuthenticatedHandler):
             opts["alert"] = "password"
             opts["error"] = "password"
             opts["error_message"] = "Password field cannot be empty"
-            self.render('admin_login.html',**opts)
+            self.render('login.html',**opts)
         token,err = User.login(uname,passw)
         if token is not None:
             self.set_secure_cookie("DS_SESSION_TOKEN", token, expires_days=7)
@@ -173,7 +185,7 @@ class AuthLoginHandler(AuthenticatedHandler):
                 "User '"+uname+"' does not exist"
                 if x == "user" else 
                 "Incorrect password")(err)
-            self.render('admin_login.html',**opts)
+            self.render('login.html',**opts)
 
 if __name__ == "__main__":
     define("port", default=15210, help="run on the given port", type=int)

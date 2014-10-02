@@ -31,7 +31,15 @@ class Poem(object):
     @classmethod
     def getMaxDraftID(cls):
         return getMaxDraftID()
-    
+
+    @classmethod
+    def getAllPoems(cls):
+        return pullAllPoems()
+
+    @classmethod
+    def getAllDrafts(cls):
+        return pullAllDrafts()
+
     def save(self,_type=None):
         if _type is not None and self._type != _type:
             self.delete()
@@ -132,6 +140,7 @@ def _init_poems(cur):
         poem text
     )
     """)
+
 
 def init_drafts():
     execute(_init_drafts)
@@ -301,12 +310,21 @@ def _pull_draft(cur,draft_id):
     """,(draft_id,))
     return cur.fetchone()
 
-def pullAll():
-    return execute(_pullAll)
+def pullAllPoems():
+    return execute(_pullAllPoems)
 
-def _pullAll(cur):
+def _pullAllPoems(cur):
     cur.execute("""
-    SELECT * FROM poems
+    SELECT * FROM poems ORDER BY poem_id DESC
+    """)
+    return cur.fetchall()
+
+def pullAllDrafts():
+    return execute(_pullAllDrafts)
+
+def _pullAllDrafts(cur):
+    cur.execute("""
+    SELECT * FROM drafts ORDER BY poem_id DESC
     """)
     return cur.fetchall()
 
@@ -395,6 +413,5 @@ def execute(f,*args):
     conn.commit()
     conn.close()
     return val
-
 
 
