@@ -124,9 +124,9 @@ class AdminEditHandler(AuthenticatedHandler):
         p = Poem(_json["title"],_json["date"],_json["poem"],_type,new=False,poem_id=poem_id)
         p.save(_json["type"])
         if _json["type"] == "draft":
-            msg = "Poem saved as draft " + datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
+            msg = "Poem saved as draft " + datetime.datetime.now().strftime("%m/%d/%Y %H:%M")
         elif _json["type"] == "poem":
-            msg = "Poem saved " + datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
+            msg = "Poem saved " + datetime.datetime.now().strftime("%m/%d/%Y %H:%M")
         status = "success"
         if _type == _json["type"]:
             self.set_header("Content-Type","application/json")
