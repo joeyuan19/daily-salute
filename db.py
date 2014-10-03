@@ -98,7 +98,7 @@ class Poem(object):
         self._type = _type
 
     def get_preview(self):
-        return avoid_incomplete_tag(self.poem[:30])+'...'
+        return avoid_incomplete_tag(self.poem)[:30]+'...'
 
 
 class User(object):
@@ -114,6 +114,15 @@ class User(object):
     def create(cls,username,password):
         create_user(username,password)
 
+class Content(object):
+    @classmethod
+    def getAbout(cls):
+        return get_about()
+
+    @classmethod
+    def saveAbout(cls):
+        save_about(about)
+
 def loadpword():
     with open('db_pass.txt','r') as f:
         return ''.join(i.strip() for i in f).strip()
@@ -124,6 +133,7 @@ def reset():
     reset_poems()
     reset_drafts()
     reset_users()
+    reset_content()
 
 def reset_poems():
     execute(_reset_poems)
@@ -131,7 +141,7 @@ def reset_poems():
 
 def _reset_poems(cur):
     cur.execute("""
-    DROP TABLE poems
+    DR#OP TABLE poems
     """)
 
 def reset_drafts():
@@ -140,7 +150,15 @@ def reset_drafts():
 
 def _reset_drafts(cur):
     cur.execute("""
-    DROP TABLE drafts
+    DR#OP TABLE drafts
+    """)
+def reset_content():
+    execute(_reset_content)
+    init_content()
+
+def _reset_content(cur):
+    cur.execute("""
+    DR#OP TABLE content 
     """)
 
 def reset_users():
@@ -149,7 +167,7 @@ def reset_users():
 
 def _reset_users(cur):
     cur.execute("""
-    DROP TABLE users 
+    DR#OP TABLE users
     """)
 
 def init():
@@ -195,6 +213,32 @@ def _init_users(cur):
         token text
     )
     """)
+
+def init_content():
+    execute(_init_content)
+
+def _init_content(cur):
+    cur.execute("""
+    CREATE TABLE content (
+        about text
+    )
+    """)
+
+def get_about():
+    return execute(_get_about)
+
+def _get_about(cur):
+    cur.execute("""
+    SELECT about FROM content
+    """)
+
+def save_about(about):
+    execute(_get_about,about)
+
+def _save_about(cur,about):
+    cur.execute("""
+    UPDATE content SET about=%s
+    """,(about,))
 
 def create_user(username,password):
     p = encrypt(password)
@@ -243,7 +287,7 @@ def _logout(cur,user,token):
 def delete(poem,with_shift=False):
     if poem._type == "poem":
         execute(_delete,poem) 
-    elif poem._type == "poem":
+    elif poem._type == "draft":
         execute(_delete_draft,poem) 
     else:
         return
@@ -487,10 +531,11 @@ def _shift(cur,ident,amount):
     """,(amount,))
 
 def execute(f,*args):
-    conn = psycopg2.connect(host=DB_ADDR,
-                            database='daily_salute_db',
-                            user='daily_saluter',
-                            password=loadpword())
+    conn = psycopg2.connect(
+        host=DB_ADDR,
+        database='daily_salute_db',
+        user='daily_saluter',
+        password=loadpword())
     val = None
     cur = conn.cursor()
     val = f(cur,*args)

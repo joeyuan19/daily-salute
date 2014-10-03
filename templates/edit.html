@@ -4,6 +4,7 @@
 {% block header_styles %}
 <link href="/static/external/google-code-prettify/prettify.css" rel="stylesheet">
 <link href="/static/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="/static/css/admin.css" rel="stylesheet"/>
 <link href="/static/css/editor.css" rel="stylesheet"/>
 {% end %}        
 {% block header_scripts %}
@@ -58,7 +59,7 @@
         </div>
     </div>
 </div>
-<div class="navbar ds-navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+<div class="navbar ds-navbar ds-admin-navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
@@ -150,7 +151,7 @@
                         <input class="span2" placeholder="URL" type="text" data-edit="createLink"/>
                         <button class="btn btn-default" type="button">Add</button>
                     </div>
-                    <a class="btn btn-default" data-edit="unlink" title="Remove Hyperlink"><i class="fa fa-cut"></i></a>
+                    <a class="btn btn-default" data-edit="unlink" title="Remove Hyperlink"><i class="fa fa-unlink"></i></a>
                 </div>
                 <div class="btn-group">
                     <a class="btn btn-default" title="Insert picture (or just drag & drop)" id="pictureBtn"><i class="fa fa-photo"></i></a>
@@ -176,28 +177,43 @@
                 </h4>
             </div>
             <br>
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="save('{{poem_type}}');">
-                {% if poem_type == "draft" %}
-                    Save as draft
-                {% else %}
-                    Save
-                {% end %}
+            <div class="pull-left">
+                <a role="button" class="btn btn-primary" href="/admin/list/poems">
+                    <span class="glyphicon glyphicon-arrow-left visible-xs-inline"></span>
+                    <span class="hidden-xs">
+                        Back to List
+                    </span>
+                </a>
+            </div>
+            <div class="btn-group pull-right">
+                <button class="btn btn-success" onclick="save('{{poem_type}}');">
+                    <span class="glyphicon glyphicon-floppy-save visible-xs-inline"></span>
+                    <span class="hidden-xs">
+                    {% if poem_type == "draft" %}
+                        Save as draft
+                    {% else %}
+                        Save
+                    {% end %}
+                    </span>
                 </button>
                 <button class="btn btn-default" onclick="preview();">
                     Preview
                 </button>
                 {% if poem_type == "draft" %}
                 <button class="btn btn-success" onclick="publish();">
-                    Publish
+                    Preview
                 </button>
                 {% elif poem_type == "poem" %}
                 <button class="btn btn-default" onclick="unpublish();">
                     Unpublish
                 </button>
                 {% end %}
-                <button class="btn btn-danger" onclick="promptDelete()">Delete</button>
+                <button class="btn btn-danger" onclick="promptDelete()">
+                    <span class="glyphicon glyphicon-trash visible-xs-inline"></span>
+                    <span class="hidden-xs">Delete</span>
+                </button>
             </div>
+            <br><br><br>
         </div>
     </div>
 </div>

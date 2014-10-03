@@ -110,7 +110,7 @@
                         <td>{{poem["title"]}}</td>
                         <td>{% raw poem["preview"] %}</td>
                         <td>
-                            <div class="btn-group pull-right">
+                            <div class="pull-right">
                                 <button class="btn btn-default" onclick="moveModal({{poem['poem_id']}})"><span class="glyphicon glyphicon-sort"></span><span class="hidden-xs"> Move</span></button>
                                 <a role="button" class="btn btn-primary" href="/admin/edit/{{type[:-1].lower()}}/{{poem['poem_id']}}"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> Edit</span></a>
                             </div>

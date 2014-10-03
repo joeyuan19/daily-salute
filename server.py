@@ -12,7 +12,7 @@ import tornado.web
 import tornado.template
 from tornado.options import define, options
 
-from db import Poem, User
+from db import Poem, User, Content
 from helper import avoid_incomplete_tag
 
 DEBUG = True
@@ -100,14 +100,14 @@ class AdminManageHandler(AuthenticatedHandler):
                     "poem_id":i[0],
                     "title":i[1],
                     "date":i[2],
-                    "preview":avoid_incomplete_tag(i[3][:30])+'...'
+                    "preview":avoid_incomplete_tag(i[3])[:30]+'...'
                 } for i in Poem.getPoemPage(0,5)]
             drafts = [
                 {
                     "poem_id":i[0],
                     "title":i[1],
                     "date":i[2],
-                    "preview":avoid_incomplete_tag(i[3][:30])+'...'
+                    "preview":avoid_incomplete_tag(i[3])[:30]+'...'
                 } for i in Poem.getDraftPage(0,5)]
             opts = {
                 'poems':poems,
@@ -119,11 +119,15 @@ class AdminManageHandler(AuthenticatedHandler):
         elif _type == "content":    
             self.render('',**opts)
 
-class AdminHandler(AuthenticatedHandler):
-    @tornado.web.authenticated
+class ContactHandler(AuthenticatedHandler):
     def get(self):
         opts = {}
-        self.render('admin.html',**opts)
+        self.render('contact.html',**opts)
+
+class AboutHandler(AuthenticatedHandler):
+    def get(self):
+        opts = {'about':Content.getAbout()}
+        self.render('about.html',**opts)
     
 class AdminCreateHandler(AuthenticatedHandler):
     @tornado.web.authenticated
@@ -186,16 +190,28 @@ class AdminEditHandler(AuthenticatedHandler):
     @tornado.web.authenticated
     def delete(self,_type,poem_id):
         if _type == "poem":
-            print "delete poem"
             Poem.deletePoem(poem_id)
             self.write(json.dumps({"status":"success"}))
         elif _type == "draft":
-            print "delete draft"
             Poem.deleteDraft(poem_id)
             self. write(json.dumps({"status":"success"}))
         else:
             self.write(json.dumps({"status":"failed"}))
-    
+
+class AdminEditAboutHandler(AuthenticatedHandler):
+    @tornado.web.authenticated
+    def get(self):
+        opts = {'about':Content.getAbout()}
+        self.render('edit_about.html',**opts)
+
+    @tornado.web.authenticated
+    def post(self):
+        about = self.get_argument("about")
+        Content.saveAbout(about)
+        status = "success"
+        msg = "Poem saved " + datetime.datetime.now().strftime("%H:%M  %m/%d/%Y")
+        self.set_header("Content-Type","application/json")
+        self.write(json.dumps({"status":status,"msg":msg}))
 
 class AdminListHandler(AuthenticatedHandler):
     @tornado.web.authenticated
@@ -215,7 +231,7 @@ class AdminListHandler(AuthenticatedHandler):
                     "poem_id":i[0],
                     "title":i[1],
                     "date":i[2],
-                    "preview":avoid_incomplete_tag(i[3][:30])+'...'
+                    "preview":avoid_incomplete_tag(i[3])[:30]+'...'
                 } for i in Poem.getPoemPage(page,10)]
             opts["page_range"] = [1,Poem.getMaxID()+1]
         elif _type == "drafts":
@@ -224,7 +240,7 @@ class AdminListHandler(AuthenticatedHandler):
                     "poem_id":i[0],
                     "title":i[1],
                     "date":i[2],
-                    "preview":avoid_incomplete_tag(i[3][:30])+'...'
+                    "preview":avoid_incomplete_tag(i[3])[:30]+'...'
                 } for i in Poem.getDraftPage(page,10)]
             opts["page_range"] = [1,Poem.getMaxDraftID()+1]
         else:
@@ -321,11 +337,14 @@ if __name__ == "__main__":
         [
             (r'/auth/login',AuthLoginHandler),
             (r'/auth/logout',AuthLogoutHandler),
+            (r'/admin/edit/about',AdminEditAboutHandler),
             (r'/admin/edit/([a-zA-Z]+)/([0-9]+)',AdminEditHandler),
             (r'/admin/list/([a-zA-Z]+)(?:/([0-9]+))?',AdminListHandler),
             (r'/admin/create',AdminCreateHandler),
             (r'/admin/manage/(.*)',AdminManageHandler),
             (r'/admin',AdminHandler),
+            (r'/contact',ContactHandler),
+            (r'/about',AboutHandler),
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path':static_path}),
             (r'/poem/random', RandomPoemHandler),
             (r'/poem/([0-9]+)', PoemHandler),

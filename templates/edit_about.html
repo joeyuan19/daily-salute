@@ -14,25 +14,6 @@
 <script src="/static/js/editor.js"></script>
 {% end %}        
 {% block content %}
-<div id="delete-modal" class="modal fade">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h3 class="text-danger">Delete Poem?</h3>
-            </div>
-            <div class="modal-body">
-                <p>
-                    Are you sure you wish to delete this poem?  This action cannot be undone.
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger pull-left" onclick="deletePoem()" data-dismiss="modal">Delete</button>
-                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
 <div id="poem-preview-modal" class="modal fade">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -102,16 +83,9 @@
     <div id="alert-row" class="row">
     </div>
     <div class="row">
-        <div class="input-group">
-            <label for="poem-title" class="input-group-addon">Title</label>
-            <input id="poem-title" type="text" class="col-sm-10 col-md-10 col-lg-10 form-control" placeholder="If blank, title defaults to the date" value="{{ poem_title }}">
-        </div>
-        <br>
-        <div class="input-group">
-            <label for="poem-date" class="input-group-addon">Date</label>
-            <input id="poem-date" type="text" class="form-control" placeholder="Poem Date" value="{{ poem_date }}"/>
-        </div>
-        <br>
+        <h1>Edit About Page</h1>
+    </div>
+    <div class="row">
         <div class="input-group">
             <div class="btn-toolbar" data-role="editor-toolbar" data-target="#editor">
                 <div class="btn-group">
@@ -164,53 +138,24 @@
             </div>
             <br>
             <div id="editor">
-                {% raw poem_content %}
-            </div>
-            <br>
-            <div>
-                <h4>
-                    {% if poem_type == "poem" %}
-                    <span class="glyphicon glyphicon-ok" style="color: green;"></span>&nbsp;&nbsp;Published
-                    {% elif poem_type == "draft" %}
-                    <span class="glyphicon glyphicon-remove" style="color: red;"></span>&nbsp;&nbsp;Unpublished
-                    {% end %}
-                </h4>
+                {% raw about %}
             </div>
             <br>
             <div class="pull-left">
-                <a role="button" class="btn btn-primary" href="/admin/list/poems">
+                <a role="button" class="btn btn-primary" href="/admin/manage/content">
                     <span class="glyphicon glyphicon-arrow-left visible-xs-inline"></span>
                     <span class="hidden-xs">
-                        Back to List
+                        Back to Content Manager
                     </span>
                 </a>
             </div>
             <div class="btn-group pull-right">
-                <button class="btn btn-success" onclick="save('{{poem_type}}');">
+                <button class="btn btn-success" onclick="save();">
                     <span class="glyphicon glyphicon-floppy-save visible-xs-inline"></span>
-                    <span class="hidden-xs">
-                    {% if poem_type == "draft" %}
-                        Save as draft
-                    {% else %}
-                        Save
-                    {% end %}
-                    </span>
+                    <span class="hidden-xs"> Save</span>
                 </button>
                 <button class="btn btn-default" onclick="preview();">
                     Preview
-                </button>
-                {% if poem_type == "draft" %}
-                <button class="btn btn-success" onclick="publish();">
-                    Preview
-                </button>
-                {% elif poem_type == "poem" %}
-                <button class="btn btn-default" onclick="unpublish();">
-                    Unpublish
-                </button>
-                {% end %}
-                <button class="btn btn-danger" onclick="promptDelete()">
-                    <span class="glyphicon glyphicon-trash visible-xs-inline"></span>
-                    <span class="hidden-xs">Delete</span>
                 </button>
             </div>
             <br><br><br>
