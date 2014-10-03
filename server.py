@@ -121,7 +121,7 @@ class AdminManageHandler(AuthenticatedHandler):
 
 class AdminHandler(AuthenticatedHandler):
     @tornado.web.authenticated
-    def get(self,_type,poem_id):
+    def get(self):
         opts = {}
         self.render('admin.html',**opts)
     
@@ -186,9 +186,11 @@ class AdminEditHandler(AuthenticatedHandler):
     @tornado.web.authenticated
     def delete(self,_type,poem_id):
         if _type == "poem":
+            print "delete poem"
             Poem.deletePoem(poem_id)
             self.write(json.dumps({"status":"success"}))
         elif _type == "draft":
+            print "delete draft"
             Poem.deleteDraft(poem_id)
             self. write(json.dumps({"status":"success"}))
         else:
@@ -323,6 +325,7 @@ if __name__ == "__main__":
             (r'/admin/list/([a-zA-Z]+)(?:/([0-9]+))?',AdminListHandler),
             (r'/admin/create',AdminCreateHandler),
             (r'/admin/manage/(.*)',AdminManageHandler),
+            (r'/admin',AdminHandler),
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path':static_path}),
             (r'/poem/random', RandomPoemHandler),
             (r'/poem/([0-9]+)', PoemHandler),

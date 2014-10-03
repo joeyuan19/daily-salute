@@ -30,14 +30,14 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li>
+                <li class="active">
                     <a href="/admin/manage/poems">
                         <span class="ds-navbar-text">Manage Poems</span>
                     </a>
                 </li>
                 <li>
                     <a href="/admin/manage/content">
-                        <span class="ds-navbar-text active">Manage Pages</span>
+                        <span class="ds-navbar-text">Manage Pages</span>
                     </a>
                 </li>
                 <li>
@@ -51,22 +51,24 @@
 </div>
 <!-- Resizable Content -->
 <div class="container">
-    <div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-10 col-lg-offset-1 col-lg-10 col-centered">
+    <div class="">
         <div class="row">
             {% for collection_title,collection,has_more in [("Drafts",drafts,more_drafts),("Poems",poems,more_poems)] %}
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="panel panel-default">
+                <div class="panel panel-default ds-panel">
                     <!-- Default panel contents -->
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 vcenter">
-                                <h3 class=""><b>{{collection_title}}</b></h3>
-                            </div><!--
-                            --><div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 vcenter">
-                                <button class="btn btn-success pull-right">Create</button>
+                    <a href="/admin/list/poems" class>
+                        <div class="panel-heading panel-link">
+                            <div class="row">
+                                <div class="col-xs-6 vcenter">
+                                    <h3 class="ds-panel-heading"><b>{{collection_title}}</b></h3>
+                                </div><!--
+                                --><div class="col-xs-6 vcenter">
+                                    <button class="btn btn-success pull-right">Create</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                     {% if len(collection) > 0 %}
                     <!-- Table -->
                     <table class="table">
@@ -86,7 +88,7 @@
                                 <td>{{poem["date"]}}</td>
                                 <td>{{poem["title"]}}</td>
                                 <td>{% raw poem["preview"] %}</td>
-                                <td><button class="btn btn-primary pull-right" onclick="link('/admin/edit/{{collection_title[:-1].lower()}}/{{poem["poem_id"]}}')">Edit</button></td>
+                                <td><button class="btn btn-primary pull-right" onclick="link('/admin/edit/{{collection_title[:-1].lower()}}/{{poem["poem_id"]}}')"><span class="glyphicon glyphicon-pencil visible-xs-inline"></span><span class="hidden-xs">  Edit</span></button></td>
                             </tr>
                             {% end %}
                         </tbody>
@@ -97,8 +99,8 @@
                     </div>
                     {% end %}
                     {% if has_more %}
-                    <a href="/admin/list/{{collection_title.lower()}}">
-                        <div class="panel-footer">
+                    <a class="no-decoration" href="/admin/list/{{collection_title.lower()}}">
+                        <div class="panel-footer ds-panel-footer ds-panel-link">
                             See all {{collection_title.lower()}}
                         </div>
                     </a>

@@ -451,26 +451,22 @@ def _movePoem(cur,original_id,new_id):
         SET poem_id = poem_id-1000000000
         WHERE poem_id <= %s AND poem_id >= %s
         """,(original_id,new_id))
-        print "down shift"
         cur.execute("""
         UPDATE poems
         SET poem_id = poem_id+1000000000+1
         WHERE poem_id < 0
         """)
-        print "up shift"
     elif new_id > original_id:
         cur.execute("""
         UPDATE poems
         SET poem_id = poem_id-1000000000
         WHERE poem_id >= %s AND poem_id <= %s
         """,(original_id,new_id))
-        print "down shift"
         cur.execute("""
         UPDATE poems
         SET poem_id = poem_id+1000000000-1
         WHERE poem_id < 0
         """)
-        print "up shift"
 
 def shift(_type,ident,amount):
     if _type == "poem":

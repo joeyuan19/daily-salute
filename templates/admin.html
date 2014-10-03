@@ -51,62 +51,22 @@
 </div>
 <!-- Resizable Content -->
 <div class="container">
-    <div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-10 col-lg-offset-1 col-lg-10 col-centered">
-        <div class="row">
-            {% for collection_title,collection,has_more in [("Drafts",drafts,more_drafts),("Poems",poems,more_poems)] %}
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                <div class="panel panel-default">
-                    <!-- Default panel contents -->
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 vcenter">
-                                <h3 class=""><b>{{collection_title}}</b></h3>
-                            </div><!--
-                            --><div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 vcenter">
-                                <button class="btn btn-success pull-right">Create</button>
-                            </div>
-                        </div>
-                    </div>
-                    {% if len(collection) > 0 %}
-                    <!-- Table -->
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Date</th>
-                                <th>Title</th>
-                                <th>Preview</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for poem in collection %}
-                            <tr>
-                                <td>{{poem["poem_id"]}}</td>
-                                <td>{{poem["date"]}}</td>
-                                <td>{{poem["title"]}}</td>
-                                <td>{% raw poem["preview"] %}</td>
-                                <td><button class="btn btn-primary pull-right" onclick="link('/admin/edit/{{collection_title[:-1].lower()}}/{{poem["poem_id"]}}')">Edit</button></td>
-                            </tr>
-                            {% end %}
-                        </tbody>
-                    </table>
-                    {% else %}
-                    <div class="panel-body">
-                        No {{collection_title.lower()}}
-                    </div>
-                    {% end %}
-                    {% if has_more %}
-                    <a href="/admin/list/{{collection_title.lower()}}">
-                        <div class="panel-footer">
-                            See all {{collection_title.lower()}}
-                        </div>
-                    </a>
-                    {% end %}
-                </div> 
+    <div class="row">
+        <div class="panel panel-info ds-panel">
+            <div class="panel-heading">
+                <h3 class="ds-panel-heading">Admin Tools</h3>
             </div>
-            {% end %}
+            <div class="panel-body">
+                <div class="btn-group">
+                    <a role="button" class="btn btn-success btn-lg" href="/admin/create">Create new Poem</a>
+                    <a role="button" class="btn btn-success btn-lg" href="/admin/manage/poems">Manage Poems</a>
+                    <a role="button" class="btn btn-success btn-lg" href="/admin/manage/content">Manage Content</a>
+                </div>
+            </div>
         </div>
+    </div>
+    <div class="row">
+        
     </div>
 </div>
 {% end %}

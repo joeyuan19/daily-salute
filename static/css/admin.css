@@ -1,9 +1,15 @@
 body { 
     padding-top: 100px;
-    min-width: 460px;
+}
+.ds-navbar-title {
+    font-size: 100%;
+}
+@media (min-width: 500px) {
+    .ds-navbar-title {
+        font-size: 150%;
+    }
 }
 .ds-admin-navbar {
-    min-width: 460px;
 }    
 .ds-form {
 }
@@ -11,8 +17,23 @@ body {
 }
 .ds-form-input:focus {
 }
-.ds-form-btn {}
-
+.ds-form-btn {
+}
+.ds-panel .panel-heading, .ds-panel .panel-footer {
+    background-color: #0099BB;
+}
+.ds-panel {
+    border-color:#0099BB;
+}
+.ds-panel-heading, .ds-panel-footer {
+    color:#FFFFFF;
+}
+.ds-panel-link:hover {
+    background-color:#20B9DB;
+}
+.no-decoration:hover {
+    text-decoration: none;
+}
 .vcenter {
     display: inline-block;
     vertical-align: middle;
