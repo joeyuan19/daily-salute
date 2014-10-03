@@ -53,24 +53,31 @@ class Poem(object):
     def movePoem(cls,original_id,new_id):
         movePoem(original_id,new_id)
 
-    #classmethod
+    @classmethod
     def new(cls):
         return cls('','','','draft',new=True)
+
+    @classmethod
+    def deletePoem(cls,poem_id):
+        cls.load(poem_id).delete(with_shift=True) 
+
+    @classmethod
+    def deleteDraft(cls,poem_id):
+        cls.load_draft(poem_id).delete(with_shift=True) 
 
     def save(self,_type=None,without_assignment=False):
         if _type is not None and self._type != _type:
             self.delete()
             self.new = True
             self._type = _type
-        print "saving"
         if self.new:
             insert(self,without_assignment)
             self.new = False
         else:
             update(self)
     
-    def delete(self):
-        delete(self)
+    def delete(self,with_shift=False):
+        delete(self,with_shift=False)
     
     def getData(self):
         return {
@@ -233,11 +240,15 @@ def _logout(cur,user,token):
     else:
         return None
 
-def delete(poem):
+def delete(poem,with_shift=False):
     if poem._type == "poem":
         execute(_delete,poem) 
-    elif poem._type == "draft":
+    elif poem._type == "poem":
         execute(_delete_draft,poem) 
+    else:
+        return
+    if with_shift:
+        shift(poem._type,poem.poem_id,-1)
 
 def _delete(cur,poem):
     cur.execute("""
@@ -461,8 +472,11 @@ def _movePoem(cur,original_id,new_id):
         """)
         print "up shift"
 
-def shift(ident,amount):
-    execute(_shift,ident,amount)
+def shift(_type,ident,amount):
+    if _type == "poem":
+        execute(_shift_poems,ident,amount)
+    if _type == "draft":
+        execute(_shift_drafts,ident,amount)
 
 def _shift(cur,ident,amount):
     cur.execute("""

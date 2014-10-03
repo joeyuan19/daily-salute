@@ -13,6 +13,25 @@
 <script src="/static/js/editor.js"></script>
 {% end %}        
 {% block content %}
+<div id="delete-modal" class="modal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h3 class="text-danger">Delete Poem?</h3>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Are you sure you wish to delete this poem?  This action cannot be undone.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger pull-left" onclick="deletePoem()" data-dismiss="modal">Delete</button>
+                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div id="poem-preview-modal" class="modal fade">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -50,7 +69,7 @@
             </button>
             <div class="navbar-brand">
                 <a class="ds-navbar-text ds-navbar-title" href="/admin">
-                    Daily Salute
+                    DailySalute
                     <small>
                             Administration
                     </small>
@@ -177,6 +196,7 @@
                     Unpublish
                 </button>
                 {% end %}
+                <button class="btn btn-danger" onclick="promptDelete()">Delete</button>
             </div>
         </div>
     </div>

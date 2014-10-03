@@ -5,10 +5,10 @@ body {
     box-shadow: 0px 10px 10px #555;
 }
 .ds-navbar-title {
-    font-size: 120%;
+    font-size: 100%;
 }
 @media (min-width: 768px) {
-        .ds-navbar-title {
+    .ds-navbar-title {
         font-size: 150%;
     }
 }

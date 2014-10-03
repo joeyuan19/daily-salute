@@ -182,6 +182,18 @@ class AdminEditHandler(AuthenticatedHandler):
             self.write(json.dumps({"status":status,"msg":msg}))
         else:
             self.write(json.dumps({"status":"redirect","msg":"saved","url":"/admin/edit/"+_json["type"]+"/"+str(p.poem_id)+"?transfer=true"}))
+    
+    @tornado.web.authenticated
+    def delete(self,_type,poem_id):
+        if _type == "poem":
+            Poem.deletePoem(poem_id)
+            self.write(json.dumps({"status":"success"}))
+        elif _type == "draft":
+            Poem.deleteDraft(poem_id)
+            self. write(json.dumps({"status":"success"}))
+        else:
+            self.write(json.dumps({"status":"failed"}))
+    
 
 class AdminListHandler(AuthenticatedHandler):
     @tornado.web.authenticated

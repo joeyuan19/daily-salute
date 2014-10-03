@@ -20,6 +20,9 @@ function publish() {
 function unpublish() {
     save("draft");
 }
+function promptDelete() {
+    $("#delete-modal").modal();
+}
 function save() {
     var type;
     if (window.location.href.indexOf("poem") > 0) {
@@ -46,11 +49,29 @@ function save(type) {
     });
 }
 
+function deletePoem() {
+    jQuery.deleteJSON(window.location.href,{"confirm":"delete"},function (response) {
+        window.location.href = '/admin/manage/poems'
+    })
+}
+
 function getCookie(name) {
     var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
     return r ? r[1] : undefined;
 }
 
+jQuery.deleteJSON = function(url, args, callback) {
+    $.ajax({
+        url: url,
+        type: "DELETE",
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie("_xsrf"));
+        },
+        success: function(response) {
+            callback(response);
+        }
+    });
+};
 jQuery.postJSON = function(url, args, callback) {
     args._xsrf = getCookie("_xsrf");
     $.ajax({url: url, data: $.param(args), dataType: "text", type: "POST",
