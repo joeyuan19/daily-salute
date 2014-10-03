@@ -1,4 +1,3 @@
-function link(url) {
+var link = function(url) {
     window.location.href = url;
 }
-alert('derp')

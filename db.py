@@ -1,6 +1,7 @@
 import psycopg2
 
 from security import encrypt, decrypt, session_token
+from helper import avoid_incomplete_tag
 
 DB_ADDR = '127.0.0.1'
 
@@ -40,13 +41,30 @@ class Poem(object):
     def getAllDrafts(cls):
         return pullAllDrafts()
 
-    def save(self,_type=None):
+    @classmethod
+    def getPoemPage(cls,page_no,page_size):
+        return pullPoemPage(page_no,page_size)
+
+    @classmethod
+    def getDraftPage(cls,page_no,page_size):
+        return pullDraftPage(page_no,page_size)
+
+    @classmethod
+    def movePoem(cls,original_id,new_id):
+        movePoem(original_id,new_id)
+
+    #classmethod
+    def new(cls):
+        return cls('','','','draft',new=True)
+
+    def save(self,_type=None,without_assignment=False):
         if _type is not None and self._type != _type:
             self.delete()
             self.new = True
             self._type = _type
+        print "saving"
         if self.new:
-            insert(self)
+            insert(self,without_assignment)
             self.new = False
         else:
             update(self)
@@ -60,7 +78,8 @@ class Poem(object):
             'poem_title':self.title,
             'poem_date':self.creation_date,
             'poem_content':self.poem,
-            'poem_type':self._type
+            'poem_type':self._type,
+            'poem_preview':self.get_preview()
         }
     
     def __init__(self,title,creation_date,poem,_type,new=True,poem_id=0):
@@ -70,6 +89,9 @@ class Poem(object):
         self.creation_date = creation_date
         self.poem = poem
         self._type = _type
+
+    def get_preview(self):
+        return avoid_incomplete_tag(self.poem[:30])+'...'
 
 
 class User(object):
@@ -107,7 +129,7 @@ def _reset_poems(cur):
 
 def reset_drafts():
     execute(_reset_drafts)
-    init_poems()
+    init_drafts()
 
 def _reset_drafts(cur):
     cur.execute("""
@@ -221,28 +243,29 @@ def _delete(cur,poem):
     cur.execute("""
     DELETE FROM poems WHERE poem_id=%s
     """,(poem.poem_id,))
-    shift(poem.poem_id,-1)
 
 def _delete_draft(cur,poem):
     cur.execute("""
     DELETE FROM drafts WHERE poem_id=%s
     """,(poem.poem_id,))
-    shift(poem.poem_id,1)
 
-def insert(poem):
+def insert(poem,without_assignment=False):
     if poem._type == "poem":
-        execute(_insert,poem) 
+        execute(_insert,poem,without_assignment) 
     elif poem._type == "draft":
-        execute(_insert_draft,poem) 
+        execute(_insert_draft,poem,without_assignment) 
 
-def _insert(cur,poem):
-    peom.poem_id = getMaxID()+1
+def _insert(cur,poem,without_assignment=False):
+    if not without_assignment:
+        poem.poem_id = getMaxID()+1
+    print poem.getData()
     cur.execute("""
     INSERT INTO poems VALUES (%s,%s,%s,%s)
     """,(poem.poem_id,poem.title,poem.creation_date,poem.poem))
 
-def _insert_as_draft(cur,poem):
-    peom.poem_id = getMaxDraftID()+1
+def _insert_draft(cur,poem,without_assignment=False):
+    if not without_assignment:
+        poem.poem_id = getMaxDraftID()+1
     cur.execute("""
     INSERT INTO drafts VALUES (%s,%s,%s,%s)
     """,(poem.poem_id,poem.title,poem.creation_date,poem.poem))
@@ -256,7 +279,7 @@ def update(poem):
 def _update(cur,poem):
     cur.execute("""
     UPDATE poems 
-    SET (title, creation_date, poem, poem_id) = (%s,%s,%s,%s)
+    SET (title,creation_date,poem,poem_id) = (%s,%s,%s,%s)
     WHERE poem_id=%s
     """,(poem.title,
         poem.creation_date,
@@ -267,11 +290,7 @@ def _update(cur,poem):
 def _update_draft(cur,poem):
     cur.execute("""
     UPDATE drafts
-    SET (
-        title=%s,
-        creation_date=%s,
-        poem=%s,
-        poem_id=%s
+    SET (title,creation_date,poem,poem_id) = (%s,%s,%s,%s)
     WHERE poem_id=%s
     """,(poem.title,
         poem.creation_date,
@@ -301,9 +320,31 @@ def pull_draft(draft_id):
 def _pull_draft(cur,draft_id):
     cur.execute("""
     SELECT * FROM drafts
-    WHERE draft_id=%s
+    WHERE poem_id=%s
     """,(draft_id,))
     return cur.fetchone()
+
+def pullPoemPage(page_no,page_size):
+    return execute(_pullPoemPage,page_no,page_size)
+
+def _pullPoemPage(cur,page_no,page_size):
+    cur.execute("""
+    SELECT * FROM poems
+    ORDER BY poem_id DESC
+    LIMIT %s OFFSET %s
+    """,(page_size,page_size*page_no))
+    return cur.fetchall()
+
+def pullDraftPage(page_no,page_size):
+    return execute(_pullDraftPage,page_no,page_size)
+
+def _pullDraftPage(cur,page_no,page_size):
+    cur.execute("""
+    SELECT * FROM drafts
+    ORDER BY poem_id DESC
+    LIMIT %s OFFSET %s
+    """,(page_size,page_size*page_no))
+    return cur.fetchall()
 
 def pullAllPoems():
     return execute(_pullAllPoems)
@@ -358,7 +399,7 @@ def pullAllTitlesAndDates():
 
 def _pullAllTitlesAndDates(cur):
     cur.execute("""
-    SELECT (poem_id,title,creation_date) FROM poems
+    SELECT (poem_id,title,creation_date,poem) FROM poems
     """)
     return cur.fetchall()
 
@@ -367,7 +408,7 @@ def pullAllDraftTitlesAndDates():
 
 def _pullAllDraftTitlesAndDates(cur):
     cur.execute("""
-    SELECT (poem_id,title,creation_date) FROM drafts
+    SELECT (poem_id,title,creation_date,poem) FROM drafts
     """)
     return cur.fetchall()
 
@@ -381,6 +422,44 @@ def _swap(cur,poem_id_1,poem_id_2):
     poem_2.poem_id = poem_id_1
     update(poem_1)
     update(poem_2)
+
+def movePoem(original_id,new_id):
+    if original_id == new_id:
+        return
+    poem = Poem.load(original_id)
+    poem.delete()
+    execute(_movePoem,original_id,new_id)
+    poem.poem_id = new_id
+    poem.new = True
+    poem.save(without_assignment=True)
+
+def _movePoem(cur,original_id,new_id):
+    if original_id > new_id:
+        cur.execute("""
+        UPDATE poems
+        SET poem_id = poem_id-1000000000
+        WHERE poem_id <= %s AND poem_id >= %s
+        """,(original_id,new_id))
+        print "down shift"
+        cur.execute("""
+        UPDATE poems
+        SET poem_id = poem_id+1000000000+1
+        WHERE poem_id < 0
+        """)
+        print "up shift"
+    elif new_id > original_id:
+        cur.execute("""
+        UPDATE poems
+        SET poem_id = poem_id-1000000000
+        WHERE poem_id >= %s AND poem_id <= %s
+        """,(original_id,new_id))
+        print "down shift"
+        cur.execute("""
+        UPDATE poems
+        SET poem_id = poem_id+1000000000-1
+        WHERE poem_id < 0
+        """)
+        print "up shift"
 
 def shift(ident,amount):
     execute(_shift,ident,amount)
@@ -408,5 +487,4 @@ def execute(f,*args):
     conn.commit()
     conn.close()
     return val
-
 

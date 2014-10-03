@@ -1,6 +1,10 @@
 body { 
-    padding-top: 120px;
+    padding-top: 100px;
+    min-width: 460px;
 }
+.ds-admin-navbar {
+    min-width: 460px;
+}    
 .ds-form {
 }
 .ds-form-input {
@@ -9,4 +13,8 @@ body {
 }
 .ds-form-btn {}
 
-
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}

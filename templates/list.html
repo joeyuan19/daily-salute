@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}{{capitalize(type)}} List | {% end %}
+
+{% block header_styles %}
+<link rel="stylesheet" href="/static/css/admin.css"/>
+{% end %}
+
+{% block header_scripts %}
+<script type="text/javascript" src="/static/js/list.js"></script>
+{% end %}
+
+{% block content %}
+<div id="move-modal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Move Poem</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <span class="input-group-addon col-2">From</span>
+                    <input id="move-modal-original-id" type="text" class="form-control">
+                </div>
+                <br>
+                <div class="input-group">
+                    <span class="input-group-addon">To</span>
+                    <input id="move-modal-new-id" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="move()">Move</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="navbar ds-navbar ds-admin-navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="navbar-brand">
+                <a class="ds-navbar-text ds-navbar-title" href="#">
+                    Daily Salute
+                    <small>
+                            Administration
+                    </small>
+                </a>
+            </div>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/admin/manage/poems">
+                        <span class="ds-navbar-text active">Manage Poems</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/manage/content">
+                        <span class="ds-navbar-text">Manage Pages</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/auth/logout">
+                        <span class="ds-navbar-text">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Resizable Content -->
+<div class="container">
+    <div class="row">
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 vcenter">
+                        <h3 class=""><b>{{capitalize(type)}}</b></h3>
+                    </div><!--
+                    --><div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 vcenter">
+                            <a role="button" class="btn btn-success pull-right" href="/admin/create">Create</a>
+                    </div>
+                </div>
+            </div>
+            {% if len(collection) > 0 %}
+            <!-- Table -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Title</th>
+                        <th>Preview</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for poem in collection %}
+                    <tr draggable="true">
+                        <td>{{poem["poem_id"]}}</td>
+                        <td>{{poem["date"]}}</td>
+                        <td>{{poem["title"]}}</td>
+                        <td>{% raw poem["preview"] %}</td>
+                        <td>
+                            <div class="btn-group pull-right">
+                                <button class="btn btn-default" onclick="moveModal({{poem['poem_id']}})"><span class="glyphicon glyphicon-sort"></span><span class="hidden-xs"> Move</span></button>
+                                <a role="button" class="btn btn-primary" href="/admin/edit/{{type[:-1].lower()}}/{{poem['poem_id']}}"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> Edit</span></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% end %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="panel-body">
+                No {{type.lower()}}
+            </div>
+            {% end %}
+            <div class="panel-footer">
+                <div class="text-center">
+                    <ul class="pagination">
+                        <li class="{% if page == 1 %}disabled{% end %}">
+                            <a href="/admin/list/{{type}}">
+                                <span class="glyphicon glyphicon-chevron-left"></span>
+                            </a>
+                        </li>
+                        {% for idx in range(page_range[0],page_range[1]+1) %}
+                        <li class="{% if page == idx %}disabled{% end %}">
+                            <a href="/admin/list/{{type}}/{{idx}}">{{idx}}</a>
+                        </li>
+                        {% end %}
+                        <li class="{% if page == page_range[1] %}disabled{% end %}">
+                            <a href="/admin/list/{{type}}/{{page_range[1]}}">
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% end %}

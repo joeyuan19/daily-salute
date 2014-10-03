@@ -1,17 +1,19 @@
 {% extends 'base.html' %}
-{% block title %}Poem Editor | {% end %}
+{% block title %}Create new Poem | {% end %}
 
 {% block header_styles %}
 <link href="/static/external/google-code-prettify/prettify.css" rel="stylesheet">
 <link href="/static/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet">
 <link href="/static/css/editor.css" rel="stylesheet"/>
-{% end %}        
+{% end %}
+
 {% block header_scripts %}
 <script src="/static/external/jquery.hotkeys.js"></script>
 <script src="/static/external/google-code-prettify/prettify.js"></script>
 <script src="/static/external/bootstrap-wysiwyg.js"></script>
 <script src="/static/js/editor.js"></script>
-{% end %}        
+{% end %}
+
 {% block content %}
 <div id="poem-preview-modal" class="modal fade">
     <div class="modal-dialog modal-lg">
@@ -84,12 +86,12 @@
     <div class="row">
         <div class="input-group">
             <label for="poem-title" class="input-group-addon">Title</label>
-            <input id="poem-title" type="text" class="col-sm-10 col-md-10 col-lg-10 form-control" placeholder="If blank, title defaults to the date" value="{{ poem_title }}">
+            <input id="poem-title" type="text" class="col-sm-10 col-md-10 col-lg-10 form-control" placeholder="If blank, title defaults to the date" value="">
         </div>
         <br>
         <div class="input-group">
             <label for="poem-date" class="input-group-addon">Date</label>
-            <input id="poem-date" type="text" class="form-control" placeholder="Poem Date" value="{{ poem_date }}"/>
+            <input id="poem-date" type="text" class="form-control" placeholder="Poem Date" value=""/>
         </div>
         <br>
         <div class="input-group">
@@ -144,39 +146,18 @@
             </div>
             <br>
             <div id="editor">
-                {% raw poem_content %}
-            </div>
-            <br>
-            <div>
-                <h4>
-                    {% if poem_type == "poem" %}
-                    <span class="glyphicon glyphicon-ok" style="color: green;"></span>&nbsp;&nbsp;Published
-                    {% elif poem_type == "draft" %}
-                    <span class="glyphicon glyphicon-remove" style="color: red;"></span>&nbsp;&nbsp;Unpublished
-                    {% end %}
-                </h4>
             </div>
             <br>
             <div class="btn-group">
-                <button class="btn btn-primary" onclick="save('{{poem_type}}');">
-                {% if poem_type == "draft" %}
+                <button class="btn btn-success" onclick="save('poem');">
+                    Publish
+                </button>
+                <button class="btn btn-default" onclick="save('draft');">
                     Save as draft
-                {% else %}
-                    Save
-                {% end %}
                 </button>
                 <button class="btn btn-default" onclick="preview();">
                     Preview
                 </button>
-                {% if poem_type == "draft" %}
-                <button class="btn btn-success" onclick="publish();">
-                    Publish
-                </button>
-                {% elif poem_type == "poem" %}
-                <button class="btn btn-default" onclick="unpublish();">
-                    Unpublish
-                </button>
-                {% end %}
             </div>
         </div>
     </div>
