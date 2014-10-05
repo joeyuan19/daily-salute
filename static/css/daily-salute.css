@@ -7,6 +7,9 @@ body {
 .ds-navbar-title {
     font-size: 100%;
 }
+.no-decoration:hover {
+    text-decoration: none;
+}
 @media (min-width: 768px) {
     .ds-navbar-title {
         font-size: 150%;

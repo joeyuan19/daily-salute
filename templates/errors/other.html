@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Content Manager | {% end %}
+{% block title %}Error | {% end %}
 
 {% block header_styles %}
 <link rel="stylesheet" href="/static/css/admin.css"/>
@@ -10,7 +10,7 @@
 {% end %}
 
 {% block content %}
-<div class="navbar ds-navbar ds-admin-navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+<div class="navbar ds-admin-navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
@@ -49,22 +49,21 @@
         </div>
     </div>
 </div>
-<!-- Resizable Content -->
 <div class="container">
     <div class="row">
-        <div class="panel panel-info ds-panel">
-            <div class="panel-heading">
-                <h3 class="ds-panel-heading">Admin Tools</h3>
-            </div>
-            <div class="panel-body">
-                <a role="button" class="btn btn-success btn-lg" href="/admin/create">Create new Poem</a>
-                <a role="button" class="btn btn-success btn-lg" href="/admin/manage/poems">Manage Poems</a>
-                <a role="button" class="btn btn-success btn-lg" href="/admin/manage/content">Manage Content</a>
+        <div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1>Error!</h1>
+                </div>
+                <div class="panel-body">
+                   There was an error<br>
+                    Processing your request<br>
+                    <br>
+                    Return <a href='/admin'>home</a>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        
     </div>
 </div>
 {% end %}

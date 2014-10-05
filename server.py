@@ -56,11 +56,29 @@ def load_page_vars(poem_id):
     poem['next_page'] = next_page
     return poem 
 
-class IndexHandler(tornado.web.RequestHandler):
+class BaseHandler(tornado.web.RequestHandler):
+    def write_error(self,status_code,**kwargs):
+        if status_code == 404:
+            self.render('erorrs/404.html')
+        else:
+            self.render('errors/other.html')
+
+class AdminBaseHandler(tornado.web.RequestHandler):
+    def write_error(self,status_code,**kwargs):
+        if status_code == 404:
+            self.render('erorrs/admin_404.html')
+        else:
+            self.render('errors/admin_other.html')
+
+class IndexHandler(BaseHandler):
     def get(self):
         self.render('index.html',**load_page_vars(Poem.getMaxID()))
 
-class PoemHandler(tornado.web.RequestHandler):
+class ErrorHandler(BaseHandler):
+    def get(self):
+        self.render('errors/404.html')
+
+class PoemHandler(BaseHandler):
     def get(self,poem_id):
         try:
             poem_id = int(poem_id)
@@ -75,12 +93,12 @@ class PoemHandler(tornado.web.RequestHandler):
             print traceback.format_exc()
             self.redirect('/')
 
-class RandomPoemHandler(tornado.web.RequestHandler):
+class RandomPoemHandler(BaseHandler):
     def get(self):
         rand_poem = int(round(1. + (Poem.getMaxID()-1)*random.random()))
         self.redirect('/poem/'+str(rand_poem))
 
-class AuthenticatedHandler(tornado.web.RequestHandler):
+class AuthenticatedHandler(AdminBaseHandler):
     def get_current_user(self):
         return self.get_secure_cookie("DS_SESSION_TOKEN")
 
@@ -128,6 +146,12 @@ class AboutHandler(AuthenticatedHandler):
     def get(self):
         opts = {'about':Content.getAbout()}
         self.render('about.html',**opts)
+    
+class AdminHandler(AuthenticatedHandler):
+    @tornado.web.authenticated
+    def get(self):
+        opts = {}
+        self.render('admin.html',**opts)
     
 class AdminCreateHandler(AuthenticatedHandler):
     @tornado.web.authenticated
@@ -349,6 +373,7 @@ if __name__ == "__main__":
             (r'/poem/random', RandomPoemHandler),
             (r'/poem/([0-9]+)', PoemHandler),
             (r'/', IndexHandler),
+            (r'.*',ErrorHandler)
         ], **app_settings
     )
     http_server = tornado.httpserver.HTTPServer(app,**server_settings)
