@@ -10,13 +10,13 @@ body {
 .no-decoration:hover {
     text-decoration: none;
 }
-@media (min-width: 768px) {
+.ds-navbar-title {
+    font-size: 80%;
+}
+@media (min-width: 500px) {
     .ds-navbar-title {
         font-size: 150%;
     }
-}
-.ds-navbar-title {
-    font-size: 150%;
 }
 .ds-navbar-text {
     color: #0099BB;

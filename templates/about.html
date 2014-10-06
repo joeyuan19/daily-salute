@@ -48,9 +48,14 @@
 <!-- Resizable Content -->
 <div class="container">
     <div class="row">
-        <p>
-            {% raw about %}
-        </p>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h1>Daily Salute</h1>
+            </div>
+            <div class="panel-body">
+                {% raw about %}
+            </div>
+        </div>
     </div>
 </div>
 {% end %}

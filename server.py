@@ -48,7 +48,6 @@ def load_page_vars(poem_id):
     else:
         next_page = poem_id + 1
     poem = get_poem(poem_id)
-    print poem,poem_id
     if len(poem['poem_title']) == 0:
         poem['poem_title'] = poem['poem_date']
         poem['poem_date'] = ''
@@ -139,7 +138,7 @@ class AdminManageHandler(AuthenticatedHandler):
             }
             self.render('manage_poems.html',**opts)
         elif _type == "content":    
-            self.render('',**opts)
+            self.render('manage_content.html',**opts)
 
 class ContactHandler(AuthenticatedHandler):
     def get(self):
@@ -237,7 +236,7 @@ class AdminEditAboutHandler(AuthenticatedHandler):
         about = self.get_argument("about")
         Content.saveAbout(about)
         status = "success"
-        msg = "Poem saved " + datetime.datetime.now().strftime("%H:%M  %m/%d/%Y")
+        msg = "About saved " + datetime.datetime.now().strftime("%H:%M  %m/%d/%Y")
         self.set_header("Content-Type","application/json")
         self.write(json.dumps({"status":status,"msg":msg}))
 
@@ -282,11 +281,8 @@ class AdminListHandler(AuthenticatedHandler):
     def post(self,_type,page):
         original_id = int(self.get_argument('from'))
         new_id = min(max(int(self.get_argument('to')),1),Poem.getMaxID())
-        print new_id,original_id
         Poem.movePoem(original_id,new_id)
-        print "done moving"
         new_page = (Poem.getMaxID()-new_id)/10
-        print new_id
         self.write(json.dumps({"page":str(new_page)}))
 
 class AuthLogoutHandler(AuthenticatedHandler):
@@ -377,7 +373,7 @@ if __name__ == "__main__":
             (r'/poem/random', RandomPoemHandler),
             (r'/poem/([0-9]+)', PoemHandler),
             (r'/', IndexHandler),
-            (r'/admin/.*',AdminErrorHandler)
+            (r'/admin/.*',AdminErrorHandler),
             (r'.*',ErrorHandler)
         ], **app_settings
     )

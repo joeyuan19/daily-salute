@@ -120,7 +120,7 @@ class Content(object):
         return get_about()
 
     @classmethod
-    def saveAbout(cls):
+    def saveAbout(cls,about):
         save_about(about)
 
 def loadpword():
@@ -231,9 +231,10 @@ def _get_about(cur):
     cur.execute("""
     SELECT about FROM content
     """)
+    return cur.fetchone()[0]
 
 def save_about(about):
-    execute(_get_about,about)
+    execute(_save_about,about)
 
 def _save_about(cur,about):
     cur.execute("""
