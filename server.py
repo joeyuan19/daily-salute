@@ -78,6 +78,10 @@ class ErrorHandler(BaseHandler):
     def get(self):
         self.render('errors/404.html')
 
+class AdminErrorHandler(BaseHandler):
+    def get(self):
+        self.render('errors/admin_404.html')
+
 class PoemHandler(BaseHandler):
     def get(self,poem_id):
         try:
@@ -373,6 +377,7 @@ if __name__ == "__main__":
             (r'/poem/random', RandomPoemHandler),
             (r'/poem/([0-9]+)', PoemHandler),
             (r'/', IndexHandler),
+            (r'/admin/.*',AdminErrorHandler)
             (r'.*',ErrorHandler)
         ], **app_settings
     )
