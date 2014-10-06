@@ -11,26 +11,24 @@
 <script src="/static/external/jquery.hotkeys.js"></script>
 <script src="/static/external/google-code-prettify/prettify.js"></script>
 <script src="/static/external/bootstrap-wysiwyg.js"></script>
-<script src="/static/js/editor.js"></script>
+<script src="/static/js/about_editor.js"></script>
 {% end %}        
 {% block content %}
-<div id="poem-preview-modal" class="modal fade">
+<div id="about-preview-modal" class="modal fade">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h3>Poem Preview</h3>
+                <h3>About Preview</h3>
             </div>
             <div class="modal-body">
                 <div class="panel panel-default ds-post">
                     <div class="panel-heading ds-post-header">
                         <h1 class="panel-title ds-post-title">
-                            <span id="poem-preview-title"></span>
-                            <small id="poem-preview-date" class="ds-post-date">
-                            </small>
+                            <span id="about-preview-title">About</span>
                         </h1>
                     </div>
-                    <div id="poem-preview-content" class="panel-body ds-post-body">
+                    <div id="about-preview-content" class="panel-body ds-post-body">
                     </div>
                 </div>
             </div>

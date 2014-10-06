@@ -1,0 +1,35 @@
+Daily Salute To Do List:
+===========
+
+Proprietary
+===========
+[ ] Licensing
+
+Backend
+===========
+[ ] Add date added column
+[ ] remove fb formatting
+
+
+Admin
+===========
+[ ] Raw HTML edit option
+[ ] Edit About page
+    [ ] Testing
+    [+] Make page
+[ ] Error page testing
+[ ] Third party publishing
+    [ ] Instagram
+    [ ] Twitter Link
+    [ ] Facebook
+
+Front End
+===========
+[ ] Archive
+[ ] Error page testing
+    [ ] Other error poem
+[ ] Search
+[ ] Mobile testing
+[ ] Add images
+
+

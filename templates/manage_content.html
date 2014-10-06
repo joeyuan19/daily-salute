@@ -1,64 +1,15 @@
 {% extends 'base.html' %}
-{% block title %}Poem Editor | {% end %}
+{% block title %}Content Manager | {% end %}
 
 {% block header_styles %}
-<link href="/static/external/google-code-prettify/prettify.css" rel="stylesheet">
-<link href="/static/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<link href="/static/css/admin.css" rel="stylesheet"/>
-<link href="/static/css/editor.css" rel="stylesheet"/>
-{% end %}        
+<link rel="stylesheet" href="/static/css/admin.css"/>
+{% end %}
+
 {% block header_scripts %}
-<script src="/static/external/jquery.hotkeys.js"></script>
-<script src="/static/external/google-code-prettify/prettify.js"></script>
-<script src="/static/external/bootstrap-wysiwyg.js"></script>
-<script src="/static/js/editor.js"></script>
-{% end %}        
+<script type="text/javascript" src="/static/js/admin.js"></script>
+{% end %}
+
 {% block content %}
-<div id="delete-modal" class="modal fade">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h3 class="text-danger">Delete Poem?</h3>
-            </div>
-            <div class="modal-body">
-                <p>
-                    Are you sure you wish to delete this poem?  This action cannot be undone.
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger pull-left" onclick="deletePoem()" data-dismiss="modal">Delete</button>
-                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="poem-preview-modal" class="modal fade">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h3>Poem Preview</h3>
-            </div>
-            <div class="modal-body">
-                <div class="panel panel-default ds-post">
-                    <div class="panel-heading ds-post-header">
-                        <h1 class="panel-title ds-post-title">
-                            <span id="poem-preview-title"></span>
-                            <small id="poem-preview-date" class="ds-post-date">
-                            </small>
-                        </h1>
-                    </div>
-                    <div id="poem-preview-content" class="panel-body ds-post-body">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 <div class="navbar ds-navbar ds-admin-navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -70,7 +21,7 @@
             </button>
             <div class="navbar-brand">
                 <a class="ds-navbar-text ds-navbar-title" href="/admin">
-                    DailySalute
+                    Daily Salute
                     <small>
                             Administration
                     </small>
@@ -98,155 +49,17 @@
         </div>
     </div>
 </div>
+<!-- Resizable Content -->
 <div class="container">
-    <div id="alert-row" class="row">
-    </div>
     <div class="row">
-        <div class="input-group">
-            <label for="poem-title" class="input-group-addon">Title</label>
-            <input id="poem-title" type="text" class="col-sm-10 col-md-10 col-lg-10 form-control" placeholder="If blank, title defaults to the date" value="{{ poem_title }}">
-        </div>
-        <br>
-        <div class="input-group">
-            <label for="poem-date" class="input-group-addon">Date</label>
-            <input id="poem-date" type="text" class="form-control" placeholder="Poem Date" value="{{ poem_date }}"/>
-        </div>
-        <br>
-        <div class="input-group">
-            <div class="btn-toolbar" data-role="editor-toolbar" data-target="#editor">
-                <div class="btn-group">
-                    <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="Font"><i class="fa fa-font"></i><b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                    </ul>
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="Font Size"><i class="fa fa-text-height"></i>&nbsp;<b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a data-edit="fontSize 5"><font size="5">Huge</font></a></li>
-                        <li><a data-edit="fontSize 3"><font size="3">Normal</font></a></li>
-                        <li><a data-edit="fontSize 1"><font size="1">Small</font></a></li>
-                    </ul>
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-default" data-edit="bold" title="Bold (Ctrl/Cmd+B)"><i class="fa fa-bold"></i></a>
-                    <a class="btn btn-default" data-edit="italic" title="Italic (Ctrl/Cmd+I)"><i class="fa fa-italic"></i></a>
-                    <a class="btn btn-default" data-edit="strikethrough" title="Strikethrough"><i class="fa fa-strikethrough"></i></a>
-                    <a class="btn btn-default" data-edit="underline" title="Underline (Ctrl/Cmd+U)"><i class="fa fa-underline"></i></a>
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-default" data-edit="insertunorderedlist" title="Bullet list"><i class="fa fa-list-ul"></i></a>
-                    <a class="btn btn-default" data-edit="insertorderedlist" title="Number list"><i class="fa fa-list-ol"></i></a>
-                    <a class="btn btn-default" data-edit="outdent" title="Reduce indent (Shift+Tab)"><i class="fa fa-outdent"></i></a>
-                    <a class="btn btn-default" data-edit="indent" title="Indent (Tab)"><i class="fa fa-indent"></i></a>
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-default" data-edit="justifyleft" title="Align Left (Ctrl/Cmd+L)"><i class="fa fa-align-left"></i></a>
-                    <a class="btn btn-default" data-edit="justifycenter" title="Center (Ctrl/Cmd+E)"><i class="fa fa-align-center"></i></a>
-                    <a class="btn btn-default" data-edit="justifyright" title="Align Right (Ctrl/Cmd+R)"><i class="fa fa-align-right"></i></a>
-                    <a class="btn btn-default" data-edit="justifyfull" title="Justify (Ctrl/Cmd+J)"><i class="fa fa-align-justify"></i></a>
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="Hyperlink"><i class="fa fa-link"></i></a>
-                    <div class="dropdown-menu input-append">
-                        <input class="span2" placeholder="URL" type="text" data-edit="createLink"/>
-                        <button class="btn btn-default" type="button">Add</button>
-                    </div>
-                    <a class="btn btn-default" data-edit="unlink" title="Remove Hyperlink"><i class="fa fa-unlink"></i></a>
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-default" title="Insert picture (or just drag & drop)" id="pictureBtn"><i class="fa fa-photo"></i></a>
-                    <input type="file" data-role="magic-overlay" data-target="#pictureBtn" data-edit="insertImage" />
-                </div>
-                <div class="btn-group">
-                    <a class="btn btn-default" data-edit="undo" title="Undo (Ctrl/Cmd+Z)"><i class="fa fa-undo"></i></a>
-                    <a class="btn btn-default" data-edit="redo" title="Redo (Ctrl/Cmd+Y)"><i class="fa fa-repeat"></i></a>
-                </div>
+        <div class="panel panel-info ds-panel">
+            <div class="panel-heading">
+                <h3 class="ds-panel-heading">Manage Content</h3>
             </div>
-            <br>
-            <div id="editor">
-                {% raw poem_content %}
+            <div class="panel-body">
+                <a role="button" class="btn btn-success btn-lg" href="/admin/edit/about">Edit About page</a>
             </div>
-            <br>
-            <div>
-                <h4>
-                    {% if poem_type == "poem" %}
-                    <span class="glyphicon glyphicon-ok" style="color: green;"></span>&nbsp;&nbsp;Published
-                    {% elif poem_type == "draft" %}
-                    <span class="glyphicon glyphicon-remove" style="color: red;"></span>&nbsp;&nbsp;Unpublished
-                    {% end %}
-                </h4>
-            </div>
-            <br>
-            <div class="pull-left">
-                <a role="button" class="btn btn-primary" href="/admin/list/poems">
-                    <span class="glyphicon glyphicon-arrow-left visible-xs-inline"></span>
-                    <span class="hidden-xs">
-                        Back to List
-                    </span>
-                </a>
-            </div>
-            <div class="btn-group pull-right">
-                <button class="btn btn-success" onclick="save('{{poem_type}}');">
-                    <span class="glyphicon glyphicon-floppy-save visible-xs-inline"></span>
-                    <span class="hidden-xs">
-                    {% if poem_type == "draft" %}
-                        Save as draft
-                    {% else %}
-                        Save
-                    {% end %}
-                    </span>
-                </button>
-                <button class="btn btn-default" onclick="preview();">
-                    Preview
-                </button>
-                {% if poem_type == "draft" %}
-                <button class="btn btn-success" onclick="publish();">
-                    Preview
-                </button>
-                {% elif poem_type == "poem" %}
-                <button class="btn btn-default" onclick="unpublish();">
-                    Unpublish
-                </button>
-                {% end %}
-                <button class="btn btn-danger" onclick="promptDelete()">
-                    <span class="glyphicon glyphicon-trash visible-xs-inline"></span>
-                    <span class="hidden-xs">Delete</span>
-                </button>
-            </div>
-            <br><br><br>
         </div>
     </div>
 </div>
-<script>
-    $(function(){
-        function initToolbarBootstrapBindings() {
-            var fonts = ['Serif', 'Sans', 'Arial', 'Arial Black', 'Courier', 'Courier New', 'Comic Sans MS', 'Helvetica', 'Impact', 'Lucida Grande', 'Lucida Sans', 'Tahoma', 'Times', 'Times New Roman', 'Verdana'],
-            fontTarget = $('[title=Font]').siblings('.dropdown-menu');
-            $.each(fonts, function (idx, fontName) {
-                fontTarget.append($('<li><a data-edit="fontName ' + fontName +'" style="font-family:\''+ fontName +'\'">'+fontName + '</a></li>'));
-            });
-            $('a[title]').tooltip({container:'body'});
-            $('.dropdown-menu input').click(function() {return false;})
-                .change(function () {$(this).parent('.dropdown-menu').siblings('.dropdown-toggle').dropdown('toggle');})
-                .keydown('esc', function () {this.value='';$(this).change();});
-
-            $('[data-role=magic-overlay]').each(function () { 
-                var overlay = $(this), target = $(overlay.data('target')); 
-                overlay.css('opacity', 0).css('position', 'absolute').offset(target.offset()).width(target.outerWidth()).height(target.outerHeight());
-            });
-        };
-        function showErrorAlert (reason, detail) {
-            var msg='';
-            if (reason==='unsupported-file-type') { msg = "Unsupported format " +detail; }
-            else {
-                console.log("error uploading file", reason, detail);
-            }
-            $('<div class="alert"> <button type="button" class="close" data-dismiss="alert">&times;</button>'+ 
-                '<strong>File upload error</strong> '+msg+' </div>').prependTo('#alerts');
-        }
-        initToolbarBootstrapBindings();  
-        $('#editor').wysiwyg({ fileUploadError: showErrorAlert} );
-        window.prettyPrint && prettyPrint();
-    });
-</script>
 {% end %}
