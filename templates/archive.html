@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact | {% end %}
+
+
+{% block content %}
+<!-- Nav Bar -->
+<div class="navbar ds-navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <div class="navbar-brand ds-navbar-title">
+                <a class="ds-navbar-text" href="/">
+                    Daily Salute
+                </a>
+                <small>
+                    <a class="ds-navbar-text" href="/contact">
+                        by Jillian Entenman
+                    </a>
+                </small>
+            </div>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/">
+                        <span class="ds-navbar-text">Home</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/about">
+                        <span class="ds-navbar-text">About</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/contact">
+                        <span class="ds-navbar-text">Contact</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/archive">
+                        <span class="ds-navbar-text">Archive</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Resizable Content -->
+<div class="container">
+    <div class="row">
+        <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading ds-poem-header">
+                <div class="row">
+                    <div class="col-centered">
+                        <div class="ds-pad-left">
+                            <h3 class="ds-red-text"><b>Poem Archive</b></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if len(collection) > 0 %}
+            <!-- Table -->
+            <ul class="list-group">
+                {% for poem in collection %}
+                <a class="no-decoration" href="/poem/{{poem['poem_id']}}">
+                    <li class="list-group-item ds-list-highlight">
+                        <h4>{{poem["date"]}}{% if len(poem['title']) > 0 %} -- {{poem["title"]}}{% end %}</h4>
+                    </li>
+                </a>
+                {% end %}
+            </ul>
+            {% else %}
+            <div class="panel-body">
+                No Poems
+            </div>
+            {% end %}
+            <div class="panel-footer">
+                <div class="text-center">
+                    <ul class="pagination">
+                        <li class="{% if page == 1 %}disabled{% end %}">
+                            <a href="/archive">
+                                <span class="glyphicon glyphicon-chevron-left"></span>
+                            </a>
+                        </li>
+                        {% for idx in range(page_range[0],page_range[1]+1) %}
+                        <li class="{% if page == idx %}disabled{% end %}">
+                            <a href="/archive/{{idx}}">{{idx}}</a>
+                        </li>
+                        {% end %}
+                        <li class="{% if page == page_range[1] %}disabled{% end %}">
+                            <a href="/archive/{{page_range[1]}}">
+                                <span class="glyphicon glyphicon-chevron-right"></span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% end %}

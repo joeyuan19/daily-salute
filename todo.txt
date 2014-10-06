@@ -1,20 +1,20 @@
 Daily Salute To Do List:
-===========
+==========
 
 Proprietary
-===========
-[ ] Licensing
+==========
+[ ] Licensing      ***
 
 Backend
-===========
+==========
 [ ] Add date added column
-[ ] remove fb formatting
+[+] remove fb formatting
 
 
 Admin
-===========
-[ ] Raw HTML edit option
-[ ] Color for text
+==========
+[+] Raw HTML edit option
+[ ] Color for text   ***
 [+] Edit About page
     [+] Testing
     [+] Make page
@@ -25,12 +25,17 @@ Admin
     [ ] Facebook
 
 Front End
-===========
-[ ] Archive
+==========
+[+] Archive
+[ ] Hover preview for archive
 [+] Error page testing
-    [ ] Other error poem
 [ ] Search
 [+] Mobile testing
-[ ] Add images
+[ ] Add images      ***
+
+Misc
+==========
+[ ] Other error poem
+[ ] Get better fonts  ***
 
 

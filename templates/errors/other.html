@@ -1,16 +1,8 @@
 {% extends 'base.html' %}
 {% block title %}Error | {% end %}
 
-{% block header_styles %}
-<link rel="stylesheet" href="/static/css/admin.css"/>
-{% end %}
-
-{% block header_scripts %}
-<script type="text/javascript" src="/static/js/admin.js"></script>
-{% end %}
-
 {% block content %}
-<div class="navbar ds-admin-navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+<div class="navbar ds-navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
@@ -20,29 +12,31 @@
                 <span class="icon-bar"></span>
             </button>
             <div class="navbar-brand">
-                <a class="ds-navbar-text ds-navbar-title" href="/admin">
+                <a class="ds-navbar-text ds-navbar-title" href="/">
                     Daily Salute
-                    <small>
-                            Administration
-                    </small>
                 </a>
+                <small>
+                    <a class="ds-navbar-text" href="/contact">
+                        by Jillian Entenman
+                    </a>
+                </small>
             </div>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="/admin/manage/poems">
-                        <span class="ds-navbar-text">Manage Poems</span>
+                    <a href="/">
+                        <span class="ds-navbar-text">Home</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/admin/manage/content">
-                        <span class="ds-navbar-text active">Manage Pages</span>
+                    <a href="/about">
+                        <span class="ds-navbar-text">About</span>
                     </a>
                 </li>
-                <li>
-                    <a href="/auth/logout">
-                        <span class="ds-navbar-text">Logout</span>
+                <li class="active">
+                    <a href="/contact">
+                        <span class="ds-navbar-text">Contact</span>
                     </a>
                 </li>
             </ul>
@@ -57,10 +51,10 @@
                     <h1>Error!</h1>
                 </div>
                 <div class="panel-body">
-                   There was an error<br>
+                    There was an error<br>
                     Processing your request<br>
                     <br>
-                    Return <a href='/admin'>home</a>
+                    Return <a href='/'>home</a>
                 </div>
             </div>
         </div>

@@ -23,6 +23,17 @@ function unpublish() {
 function promptDelete() {
     $("#delete-modal").modal();
 }
+function toggleRawHTML() {
+    if ($("#raw-html").hasClass('active')) {
+        $("#raw-html").removeClass('active btn-primary');
+        $("#raw-html").addClass('btn-default');
+        $("#editor").html($("#editor").text());
+    } else {
+        $("#raw-html").addClass('active btn-primary');
+        $("#raw-html").removeClass('btn-default');
+        $("#editor").text($("#editor").cleanHtml());
+    }
+}
 function save() {
     var type;
     if (window.location.href.indexOf("poem") > 0) {
@@ -33,8 +44,14 @@ function save() {
     save(type);
 }
 function save(type) {
+    var content = "";
+    if ($("#raw-html").hasClass('active'))
+        content = $.parseHTML($("#editor").cleanHtml())[0].wholeText;
+    else {
+        content = $("#editor").cleanHtml();
+    }
     var poem = {
-        "poem":$("#editor").cleanHtml(),
+        "poem":content,
         "title":$("#poem-title").val(),
         "date":$("#poem-date").val(),
         "type":type
@@ -75,6 +92,9 @@ jQuery.deleteJSON = function(url, args, callback) {
 jQuery.postJSON = function(url, args, callback) {
     args._xsrf = getCookie("_xsrf");
     $.ajax({url: url, data: $.param(args), dataType: "text", type: "POST",
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie("_xsrf"));
+        },
         success: function(response) {
             callback(response);
         }

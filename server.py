@@ -77,7 +77,8 @@ class ErrorHandler(BaseHandler):
     def get(self):
         self.render('errors/404.html')
 
-class AdminErrorHandler(BaseHandler):
+class AdminErrorHandler(AdminBaseHandler):
+    @tornado.web.authenticated
     def get(self):
         self.render('errors/admin_404.html')
 
@@ -100,6 +101,29 @@ class RandomPoemHandler(BaseHandler):
     def get(self):
         rand_poem = int(round(1. + (Poem.getMaxID()-1)*random.random()))
         self.redirect('/poem/'+str(rand_poem))
+
+class ArchiveHandler(BaseHandler):
+    def get(self,page):
+        try:
+            page = max(0,int(page)-1)
+        except:
+            page = 0
+        opts = {
+            "page":page+1,
+            "capitalize":lambda s: s[0].upper()+s[1:]
+        }
+        opts["collection"] = [
+            {
+                "poem_id":i[0],
+                "title":i[1],
+                "date":i[2],
+            } for i in Poem.getPoemPage(page,20)]
+        opts["page_range"] = [1,Poem.getMaxID()+1]
+        print opts
+        lower_limit = max(1,page-2)
+        upper_limit = min(lower_limit+4,opts["page_range"][1]/20+1)
+        opts["page_range"] = (lower_limit,upper_limit)
+        self.render('archive.html',**opts)
 
 class AuthenticatedHandler(AdminBaseHandler):
     def get_current_user(self):
@@ -190,6 +214,7 @@ class AdminEditHandler(AuthenticatedHandler):
                 self.redirect('/admin/list/drafts')
         else:
             self.redirect('/admin/list/poems')
+        poem['page_no'] = (Poem.getMaxID() - poem['poem_id'])/10 + 1
         self.render('edit.html',**poem)
 
     @tornado.web.authenticated
@@ -282,7 +307,7 @@ class AdminListHandler(AuthenticatedHandler):
         original_id = int(self.get_argument('from'))
         new_id = min(max(int(self.get_argument('to')),1),Poem.getMaxID())
         Poem.movePoem(original_id,new_id)
-        new_page = (Poem.getMaxID()-new_id)/10
+        new_page = (Poem.getMaxID()-new_id)/10+1
         self.write(json.dumps({"page":str(new_page)}))
 
 class AuthLogoutHandler(AuthenticatedHandler):
@@ -369,6 +394,7 @@ if __name__ == "__main__":
             (r'/admin',AdminHandler),
             (r'/contact',ContactHandler),
             (r'/about',AboutHandler),
+            (r'/archive(?:/([0-9]+))?',ArchiveHandler),
             (r'/static/(.*)', tornado.web.StaticFileHandler, {'path':static_path}),
             (r'/poem/random', RandomPoemHandler),
             (r'/poem/([0-9]+)', PoemHandler),
