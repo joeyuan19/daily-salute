@@ -14,10 +14,11 @@ Backend
 Admin
 ===========
 [ ] Raw HTML edit option
-[ ] Edit About page
-    [ ] Testing
+[ ] Color for text
+[+] Edit About page
+    [+] Testing
     [+] Make page
-[ ] Error page testing
+[+] Error page testing
 [ ] Third party publishing
     [ ] Instagram
     [ ] Twitter Link
@@ -26,10 +27,10 @@ Admin
 Front End
 ===========
 [ ] Archive
-[ ] Error page testing
+[+] Error page testing
     [ ] Other error poem
 [ ] Search
-[ ] Mobile testing
+[+] Mobile testing
 [ ] Add images
 
 
