@@ -2,22 +2,12 @@ body {
     padding-top: 100px;
 }
 .ds-navbar-title {
-    font-size: 100%;
+    font-size: 115%;
 }
 @media (min-width: 500px) {
     .ds-navbar-title {
         font-size: 150%;
     }
-}
-.ds-admin-navbar {
-}    
-.ds-form {
-}
-.ds-form-input {
-}
-.ds-form-input:focus {
-}
-.ds-form-btn {
 }
 .ds-panel .panel-heading, .ds-panel .panel-footer {
     background-color: #0099BB;

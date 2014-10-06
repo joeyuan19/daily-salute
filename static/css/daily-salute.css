@@ -11,7 +11,7 @@ body {
     text-decoration: none;
 }
 .ds-navbar-title {
-    font-size: 120%;
+    font-size: 125%;
 }
 @media (min-width: 500px) {
     .ds-navbar-title {
@@ -24,19 +24,12 @@ body {
 .ds-navbar-text:hover {
     text-decoration: none;
 }
-
-.ds-post {}
-.ds-post-header {}
 .ds-post-title {
     font-size: 150%
 }
 .ds-post-date {
     float: right;
 }
-.ds-post-body {}
-.ds-post-content {}
-
-
 .ds-btn {
     color: #0099BB;
 }
