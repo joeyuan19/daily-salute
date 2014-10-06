@@ -11,11 +11,36 @@ body {
     text-decoration: none;
 }
 .ds-navbar-title {
-    font-size: 125%;
+    font-size: 100%;
+}
+.ds-poem-title {
+    font-size: 125%
+}
+@media (max-width: 250px) {
+    .ds-navbar-title {
+        font-size: 80%;
+    }
+    .ds-poem-title {
+        font-size: 100%
+    }
+    .hidden-xxs {
+        display: none;
+    }
+    .ds-btn {
+        font-size: 80%
+    }
+}
+@media (min-width: 350px) {
+    .ds-navbar-title {
+        font-size: 125%;
+    }
 }
 @media (min-width: 500px) {
     .ds-navbar-title {
         font-size: 150%;
+    }
+    .ds-poem-title {
+        font-size: 150%
     }
 }
 .ds-navbar-text {
@@ -27,9 +52,6 @@ body {
 .ds-poem {}
 .ds-poem-header {
     background-color: #F8DfDf !important;
-}
-.ds-poem-title {
-    font-size: 150%
 }
 .ds-poem-date {
     float: right;
