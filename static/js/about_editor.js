@@ -6,8 +6,14 @@ function preview() {
     $('#about-preview-modal').modal();
 }
 function save() {
+    var editor_content = "";
+    if ($("#raw-html").hasClass('active'))
+        editor_content = $.parseHTML($("#editor").cleanHtml())[0].wholeText;
+    else {
+        editor_content = $("#editor").cleanHtml();
+    }
     var content = {
-        "about":$("#editor").cleanHtml(),
+        "about":editor_content,
     }
     jQuery.postJSON(window.location.href,content,function (response) {
         response = eval("("+response+")");
@@ -17,6 +23,17 @@ function save() {
             window.location.href= response.url;
         }
     });
+}
+function toggleRawHTML() {
+    if ($("#raw-html").hasClass('active')) {
+        $("#raw-html").removeClass('active btn-primary');
+        $("#raw-html").addClass('btn-default');
+        $("#editor").html($("#editor").text());
+    } else {
+        $("#raw-html").addClass('active btn-primary');
+        $("#raw-html").removeClass('btn-default');
+        $("#editor").text($("#editor").cleanHtml());
+    }
 }
 function getCookie(name) {
     var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");

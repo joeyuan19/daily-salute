@@ -17,6 +17,17 @@ from helper import avoid_incomplete_tag
 
 DEBUG = True
 
+def page_range(p,p0,pm,d):
+    return max(p0,(p-d)+min(0,pm-(p+d))),min(pm,(p+d)+max(0,p0-(p-d)))
+
+def time_now():
+    return datetime.datetime.now().strftime("%M/%D/%Y %H:%M:%S")
+
+def write_error(err):
+    with open('err.log','a') as f:
+        f.write(time_now()+" > "+err+"\n\n")
+
+
 def load_cookie_secret():
     with open('cookie_secret.txt','r') as f:
         content = ''.join(i.strip() for i in f).strip()
@@ -27,7 +38,7 @@ def get_poem(poem_id):
         poem = Poem.load(poem_id).getData()
         return poem
     except:
-        print traceback.format_exc()
+        write_error(traceback.format_exc())
         return None
 
 def get_draft(poem_id):
@@ -35,7 +46,7 @@ def get_draft(poem_id):
         poem = Poem.load_draft(poem_id).getData()
         return poem
     except:
-        print traceback.format_exc()
+        write_error(traceback.format_exc())
         return None
 
 def load_page_vars(poem_id):
@@ -94,7 +105,7 @@ class PoemHandler(BaseHandler):
                 return
             self.render('index.html',**load_page_vars(poem_id))
         except:
-            print traceback.format_exc()
+            write_error(traceback.format_exc())
             self.redirect('/')
 
 class RandomPoemHandler(BaseHandler):
@@ -119,7 +130,6 @@ class ArchiveHandler(BaseHandler):
                 "date":i[2],
             } for i in Poem.getPoemPage(page,20)]
         opts["page_range"] = [1,Poem.getMaxID()+1]
-        print opts
         lower_limit = max(1,page-2)
         upper_limit = min(lower_limit+4,opts["page_range"][1]/20+1)
         opts["page_range"] = (lower_limit,upper_limit)
@@ -268,13 +278,14 @@ class AdminEditAboutHandler(AuthenticatedHandler):
 class AdminListHandler(AuthenticatedHandler):
     @tornado.web.authenticated
     def get(self,_type,page):
+        PAGE_SIZE = 10
         try:
-            page = max(0,int(page)-1)
+            page = max(1,int(page))
         except:
-            page = 0
+            page = 1
         opts = {
             "type":_type,
-            "page":page+1,
+            "page":page,
             "capitalize":lambda s: s[0].upper()+s[1:]
         }
         if _type == "poems":
@@ -284,8 +295,8 @@ class AdminListHandler(AuthenticatedHandler):
                     "title":i[1],
                     "date":i[2],
                     "preview":avoid_incomplete_tag(i[3])[:30]+'...'
-                } for i in Poem.getPoemPage(page,10)]
-            opts["page_range"] = [1,Poem.getMaxID()+1]
+                } for i in Poem.getPoemPage(page-1,PAGE_SIZE)]
+            id_range = [1,Poem.getMaxID()-1]
         elif _type == "drafts":
             opts["collection"] = [
                 {
@@ -293,13 +304,11 @@ class AdminListHandler(AuthenticatedHandler):
                     "title":i[1],
                     "date":i[2],
                     "preview":avoid_incomplete_tag(i[3])[:30]+'...'
-                } for i in Poem.getDraftPage(page,10)]
-            opts["page_range"] = [1,Poem.getMaxDraftID()+1]
+                } for i in Poem.getDraftPage(page-1,PAGE_SIZE)]
+            id_range = [1,Poem.getMaxDraftID()-1]
         else:
-            self.redirect('/admin')
-        lower_limit = max(1,page-2)
-        upper_limit = min(lower_limit+4,opts["page_range"][1]/10+1)
-        opts["page_range"] = (lower_limit,upper_limit)
+            self.redirect( '/admin')
+        opts["page_range"] = page_range(page,1,1+id_range[1]/PAGE_SIZE,2)
         self.render('list.html',**opts)
     
     @tornado.web.authenticated
@@ -325,7 +334,7 @@ class AuthLoginHandler(AuthenticatedHandler):
             if self.get_argument("from_logout",default=False):
                 opts["alert"] = "logout"
         except tornado.web.MissingArgumentError:
-            pass
+            write_error(traceback.format_exc())
         self.render('login.html',**opts)
 
     def post(self):
@@ -352,7 +361,7 @@ class AuthLoginHandler(AuthenticatedHandler):
             try:
                 url = self.get_argument("next")
                 self.redirect(url)
-            except:
+            except tornado.web.MissingArgumentError:
                 self.redirect("/admin")
         else:
             opts["error"] = err

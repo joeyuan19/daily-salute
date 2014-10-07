@@ -132,7 +132,7 @@
                                 <span class="glyphicon glyphicon-chevron-left"></span>
                             </a>
                         </li>
-                        {% for idx in range(page_range[0],page_range[1]) %}
+                        {% for idx in range(page_range[0],page_range[1]+1) %}
                         <li class="{% if page == idx %}disabled{% end %}">
                             <a href="/admin/list/{{type}}/{{idx}}">{{idx}}</a>
                         </li>

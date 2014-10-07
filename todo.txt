@@ -9,6 +9,7 @@ Backend
 ==========
 [ ] Add date added column
 [+] remove fb formatting
+[ ] Navbar templating
 
 
 Admin
