@@ -10,7 +10,7 @@ Backend
 [ ] Add date added column
 [+] remove fb formatting
 [ ] Navbar templating
-
+[ ] tagging (hashtags)
 
 Admin
 ==========
@@ -33,6 +33,7 @@ Front End
 [ ] Search
 [+] Mobile testing
 [ ] Add images      ***
+[ ] tagging (hashtags)
 
 Misc
 ==========

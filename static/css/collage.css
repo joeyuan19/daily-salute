@@ -1,0 +1,20 @@
+.collage-container {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+.collage {
+    position: fixed;
+    width: 2000px;    
+    height: 1000px;
+    overflow: hidden;
+}
+.collage-row {
+    width: 100%;
+}
+.collage-col {
+    display: inline-block;
+}
+.collage-img {
+}
+

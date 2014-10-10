@@ -27,6 +27,33 @@ def write_error(err):
     with open('err.log','a') as f:
         f.write(time_now()+" > "+err+"\n\n")
 
+def get_collage_N():
+    DIR = 'static/img/collage'
+    return len([f for f in os.listdir(DIR) if os.path.isfile(os.path.join(DIR,f)) and f.startswith('collage')])
+
+def get_collage_dims():
+    S = get_collage_N()
+    for N in range(1,6):
+        if 2*N*N > S:
+            N = N - 1
+            break
+    M = 2*N
+    return N,M
+
+def random_n(lli,n):
+    if len(lli) == n:
+        return lli
+    li = [i for i in lli]
+    if len(li)/2 < n:
+        while len(li) > n:
+            li.pop(int(len(li)*random.random()))
+        return li
+    else:
+        _li = []
+        while len(_li) < n:
+            idx = int(len(li)*random.random())
+            _li.append(li.pop(idx))
+        return _li
 
 def load_cookie_secret():
     with open('cookie_secret.txt','r') as f:
@@ -83,6 +110,37 @@ class AdminBaseHandler(tornado.web.RequestHandler):
 class IndexHandler(BaseHandler):
     def get(self):
         self.render('index.html',**load_page_vars(Poem.getMaxID()))
+
+class CollageHandler(BaseHandler):
+    def get(self):
+        self.render('test/collage.html')
+    
+class CollageAjaxHandler(BaseHandler):
+    def get(self):
+        try:
+            req = self.get_argument('req')
+            if req == 'init':
+                dims = get_collage_dims()
+                s = get_collage_N()
+                n = [i for i in xrange(1,s+1)]
+                ids = random_n(n,dims[0]*dims[1])
+                random.shuffle(ids)
+                self.write(json.dumps({
+                    'dims':dims,
+                    'ids':ids,
+                    'status':'success'
+                }))
+            elif req == 'random':
+                self.write(json.dumps({
+                    'random_id':int(get_collage_N()*random.random()),
+                    'status':'success'
+                }))
+        except:
+            self.write(json.dumps({
+                'status':'failed',
+                'msg':traceback.format_exc()
+            }))
+
 
 class ErrorHandler(BaseHandler):
     def get(self):
@@ -393,6 +451,8 @@ if __name__ == "__main__":
 
     app = tornado.web.Application(
         [
+            (r'/collage',CollageHandler),
+            (r'/ajax/collage',CollageAjaxHandler),
             (r'/auth/login',AuthLoginHandler),
             (r'/auth/logout',AuthLogoutHandler),
             (r'/admin/edit/about',AdminEditAboutHandler),
