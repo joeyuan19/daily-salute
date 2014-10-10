@@ -51,14 +51,17 @@
     </div>
 </div>
 <!-- Resizable Content -->
+{% include 'collage.html' %}
 <div class="container">
     <div class="row">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h1>Daily Salute</h1>
-            </div>
-            <div class="panel-body">
-                {% raw about %}
+        <div class="col-xs-12 col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-sm-offset-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h1>Daily Salute</h1>
+                </div>
+                <div class="panel-body">
+                    {% raw about %}
+                </div>
             </div>
         </div>
     </div>

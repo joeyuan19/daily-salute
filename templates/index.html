@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% block description %}{% end %}
 {% block content %}
 <!-- Nav Bar -->
 <div class="navbar ds-navbar navbar-default navbar-fixed-top" role="navigation">
@@ -48,6 +49,7 @@
     </div>
 </div>
 <!-- Resizable Content -->
+{% include 'collage.html' %}
 <div class="container">
     <div class="row">
         <div class="col-xs-12 col-md-offset-1 col-md-10 col-lg-offset-2 col-lg-8 col-centered">
@@ -93,6 +95,20 @@
                 <a role="button" class="btn btn-default ds-btn" onClick="link('/')">
                     <span class="hidden-xs">Newest </span><span class="glyphicon glyphicon-forward"></span>
                 </a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 col-sm-offset-3 col-sm-6 col-md-offset-4 col-md-4 col-centered">
+            <div class="panel panel-default">
+                <div class="panel-body text-center">
+                    <div>
+                        <b>Share the Salute: </b>
+                    </div>
+                    <div>
+                        http://www.dailysalute.org/poem/{{poem_id}}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

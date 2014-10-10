@@ -1,20 +1,40 @@
 .collage-container {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: -1000;
     height: 100%;
     width: 100%;
     overflow: hidden;
+    box-sizing: content-box;
 }
 .collage {
-    position: fixed;
+    position: relative;
     width: 2000px;    
     height: 1000px;
     overflow: hidden;
+    box-sizing: content-box;
 }
 .collage-row {
     width: 100%;
+    box-sizing: content-box;
 }
 .collage-col {
     display: inline-block;
+    overflow: hidden;
+    left:0px;
+    top:0px;
+    box-sizing: content-box;
 }
 .collage-img {
+    position: absolute;
+}
+.collage:before, .collage:after,
+.collage-container:before, .collage-container:after,
+.collage-img:before, .collage-img:after,
+.collage-row:before, .collage-row:after,
+.collage-col:before, .collage-col:after,
+{
+    box-sizing: content-box;
 }
 

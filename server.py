@@ -128,11 +128,7 @@ class CollageAjaxHandler(BaseHandler):
                 self.write(json.dumps({
                     'dims':dims,
                     'ids':ids,
-                    'status':'success'
-                }))
-            elif req == 'random':
-                self.write(json.dumps({
-                    'random_id':int(get_collage_N()*random.random()),
+                    'lim':s,
                     'status':'success'
                 }))
         except:
