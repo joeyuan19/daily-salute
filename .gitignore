@@ -1,5 +1,6 @@
 db_pass.txt
 cookie_secret.txt
+user_script.py
 
 *.swp
 *.un~

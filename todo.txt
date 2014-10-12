@@ -8,9 +8,10 @@ Proprietary
 Backend
 ==========
 [ ] Add date added column
-[+] remove fb formatting
+[+] Remove fb formatting
 [ ] Navbar templating
-[ ] tagging (hashtags)
+[ ] Tagging (hashtags)
+[ ] Add HTTPS
 
 Admin
 ==========

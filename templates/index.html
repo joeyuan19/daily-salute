@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 {% block description %}{% end %}
 {% block content %}
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk')); alert("done");</script>
 <!-- Nav Bar -->
 <div class="navbar ds-navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
@@ -102,12 +110,7 @@
         <div class="col-xs-12 col-sm-offset-3 col-sm-6 col-md-offset-4 col-md-4 col-centered">
             <div class="panel panel-default">
                 <div class="panel-body text-center">
-                    <div>
-                        <b>Share the Salute: </b>
-                    </div>
-                    <div>
-                        http://www.dailysalute.org/poem/{{poem_id}}
-                    </div>
+                    <div class="fb-like" data-href="http://www.dailysalute.org/poem/{{poem_id}}" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div> 
                 </div>
             </div>
         </div>
