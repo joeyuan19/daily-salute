@@ -32,8 +32,14 @@ def get_collage_N():
     return len([f for f in os.listdir(DIR) if os.path.isfile(os.path.join(DIR,f)) and f.startswith('collage')])
 
 def get_collage_dims():
+    if state == 'large':
+        max_n = 8+1
+    elif state == 'small':
+        max_n = 2+1
+    else:
+        max_n = 5+1
     S = get_collage_N()
-    for N in range(1,6):
+    for N in range(1,max_n):
         if 2*N*N > S:
             N = N - 1
             break
@@ -120,7 +126,8 @@ class CollageAjaxHandler(BaseHandler):
         try:
             req = self.get_argument('req')
             if req == 'init':
-                dims = get_collage_dims()
+                state = self.get_argument('state')
+                dims = get_collage_dims(state)
                 s = get_collage_N()
                 n = [i for i in xrange(1,s+1)]
                 ids = random_n(n,dims[0]*dims[1])

@@ -1,13 +1,21 @@
 var collage = (function() {
     var instantiated = false, resizeTimer, randomTimer, lim, ids, N, M, h, w;
+    function sizing() {
+        if ($(window).width < 500 || $(window).height() < 500) {
+            return "small";
+        } else if ($(window).width > 2000 || $(window).height() < 1000) {
+            return "large";
+        } else {
+            return "normal";
+        }
+    }
+    var state;
     function resizeCheck(){
-        if ($(window).width() < 500 || $(window).height() < 300) {
-            $("#collage").empty();
+        if (state !== sizing()) {
+            init();
             return;
         }
-        if ($("#collage").is(":empty")) {
-            init();
-        }
+        state = sizing();
         $("#collage").css("left",function() {return ($(window).width()-$(this).width())/2});
         $("#collage").css("top",function() {return ($(window).height()-$(this).height())/2});
     }
@@ -54,12 +62,15 @@ var collage = (function() {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(resizeCheck,100);
         });
-        if ($(window).width() < 500 || $(window).height() < 300) {
-            $("#collage").empty();
-            return;
+        $("#collage").empty();
+        if (sizing() === "small") {
+            $("#collage").width().height();
+        } else if (sizing() === "large") {
+            init_large();
+        } else {
+            init_normal();
         }
-        console.log("init");
-        $.get('/ajax/collage',{'req':'init'},function(data,textStatus,jqXHR) {
+        $.get('/ajax/collage',{'req':'init','state':state},function(data,textStatus,jqXHR) {
             var cont = $("#collage");
             lim = data.lim;
             ids = data.ids;
@@ -68,15 +79,6 @@ var collage = (function() {
             w = cont.width()/M;
             h = cont.height()/N;
             var m,n;
-            /* // Fit to larger devices
-            if ($(window).width() > 2400) {
-                $("#collage").width(M*Math.ceil($(window).width()/M));
-                $("#collage").height($("#collage").width()/2);
-            } else if ($("#collage").height() > 1200) {
-                $("#collage").height(N*Math.ceil($("#collage").width()/N));
-                $("#collage").width(2*$(window).height());
-            }
-            */
             for (n = 0; n < N; n++) {
                 var row = $(document.createElement("div"))
                     .addClass("collage-row")
