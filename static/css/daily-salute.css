@@ -35,7 +35,7 @@ body {
     text-decoration: none;
 }
 .ds-poem-header {
-    background-color: #F8DfDf !important;
+    background-color: rgba(80,223,255,0.4) !important;
 }
 .ds-btn {
     color: #0099BB;
