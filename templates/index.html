@@ -1,11 +1,10 @@
 {% extends 'base.html' %}
-{% block description %}
-{% end %}
+{% block description %}{% end %}
 {% block meta %}
 <meta property="og:url" content="http://www.dailysalute.org/poem/{{poem_id}}" /> 
 <meta property="og:title" content="{{poem_title}} - Daily Salute" />
 <meta property="og:description" content="Daily poetry by Jillian Entenman" /> 
-<meta property="og:image" content="http://www.dailysalute.org/static/img/collage/collage{{{poem_id}}.jpg" /> 
+<meta property="og:image" content="http://www.dailysalute.org/static/img/collage/collage{{poem_id}}.jpg" /> 
 <meta property="og:site_name" content="Daily Salute" /> 
 {% end %}
 {% block content %}
