@@ -1,9 +1,9 @@
 var collage = (function() {
     var instantiated = false, resizeTimer, randomTimer, lim, ids, N, M, h, w;
     function sizing() {
-        if ($(window).width < 500 || $(window).height() < 500) {
+        if ($(window).width() < 500 || $(window).height() < 500) {
             return "small";
-        } else if ($(window).width > 2000 || $(window).height() < 1000) {
+        } else if ($(window).width() > 2000 || $(window).height() > 1000) {
             return "large";
         } else {
             return "normal";
@@ -63,14 +63,16 @@ var collage = (function() {
             resizeTimer = setTimeout(resizeCheck,100);
         });
         $("#collage").empty();
-        if (sizing() === "small") {
-            $("#collage").width().height();
-        } else if (sizing() === "large") {
-            init_large();
+        state = sizing();
+        if (state === "small") {
+            $("#collage").width(1000).height(500);
+        } else if (state === "large") {
+            $("#collage").width(4000).height(2000);
         } else {
-            init_normal();
+            $("#collage").width(2000).height(1000);
         }
         $.get('/ajax/collage',{'req':'init','state':state},function(data,textStatus,jqXHR) {
+            console.log(data);
             var cont = $("#collage");
             lim = data.lim;
             ids = data.ids;

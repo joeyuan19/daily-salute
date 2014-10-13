@@ -31,9 +31,10 @@ def get_collage_N():
     DIR = 'static/img/collage'
     return len([f for f in os.listdir(DIR) if os.path.isfile(os.path.join(DIR,f)) and f.startswith('collage')])
 
-def get_collage_dims():
+def get_collage_dims(state):
+    print state
     if state == 'large':
-        max_n = 8+1
+        max_n = 10+1
     elif state == 'small':
         max_n = 2+1
     else:

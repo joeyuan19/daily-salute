@@ -33,8 +33,10 @@ Front End
 [+] Error page testing
 [ ] Search
 [+] Mobile testing
-[ ] Add images      ***
+[+] Add images
+[ ] Collage sizing based on width/height
 [ ] tagging (hashtags)
+
 
 Misc
 ==========
