@@ -12,6 +12,7 @@ Backend
 [ ] Navbar templating
 [ ] Tagging (hashtags)
 [ ] Add HTTPS
+[ ] link shortening
 
 Admin
 ==========
