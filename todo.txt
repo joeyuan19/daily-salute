@@ -16,7 +16,10 @@ Backend
 Admin
 ==========
 [+] Raw HTML edit option
-[ ] Color for text   ***
+[ ] Poem Editor
+    [ ] Fonts
+    [ ] Color for text
+    [ ] Attach image
 [+] Edit About page
     [+] Testing
     [+] Make page
@@ -25,6 +28,7 @@ Admin
     [ ] Instagram
     [ ] Twitter Link
     [ ] Facebook
+[ ] Collage management
 
 Front End
 ==========
