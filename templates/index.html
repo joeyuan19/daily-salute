@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% block title %}{{poem_title}} || {% end %}
 {% block description %}{% end %}
 {% block meta %}
 <meta property="og:url" content="http://www.dailysalute.org/poem/{{poem_id}}" /> 
@@ -119,6 +120,8 @@
             <div class="panel panel-default">
                 <div class="panel-body text-center">
                     <div class="fb-like" data-href="http://dailysalute.org/poem/{{poem_id}}" data-width="200" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.dailysalute.org/poem/{{poem_id}}" data-text="Check out this Salute ({{poem_date}}) &quot;{{poem_title}}&quot; from the Daily Salute" data-via="jillibrown" data-hashtags="dailysalute">Tweet</a>
+                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
                 </div>
             </div>
         </div>
