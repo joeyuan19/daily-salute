@@ -255,23 +255,11 @@ class AdminHandler(AuthenticatedHandler):
 class AdminCreateHandler(AuthenticatedHandler):
     @tornado.web.authenticated
     def get(self):
-        self.render('create.html')
-    
-    @tornado.web.authenticated
-    def post(self):
-        _json = {
-            "poem":self.get_argument("poem"),
-            "date":self.get_argument("date"),
-            "title":self.get_argument("title"),
-            "type":self.get_argument("type"),
-        }
-        p = Poem(_json["title"],_json["date"],_json["poem"],_json["type"],new=True)
-        p.save(_json["type"])
-        if _json["type"] == "draft":
-            msg = "Draft saved " + datetime.datetime.now().strftime("%m/%d/%Y %H:%M")
-        elif _json["type"] == "poem":
-            msg = "Poem saved " + datetime.datetime.now().strftime("%H:%M  %m/%d/%Y")
-            self.write(json.dumps({"status":"redirect","msg":"saved","url":"/admin/edit/"+_json["type"]+"/"+str(p.poem_id)+"?transfer=true&create=true"}))
+        draft = Poem.new()
+        print draft.poem_id
+        draft.save()
+        print draft.poem_id
+        self.redirect('/admin/edit/draft/'+str(draft.poem_id))
 
 class AdminEditHandler(AuthenticatedHandler):
     @tornado.web.authenticated

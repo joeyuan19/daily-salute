@@ -43,6 +43,19 @@ function save() {
     }
     save(type);
 }
+function autosave() {
+    console.log("Autosav");
+    var content = $("#editor").cleanHtml();
+    if (window.lastState===content || content.length === 0) {
+        // pass
+    } else {
+        save();
+        window.lastState = $("#editor").cleanHtml();
+        var time = new Date();
+        $("#auto-save-info").text("Autosaved at "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds()+" "+time.getMonth()+"/"+time.getDay()+"/"+time.getFullYear());
+    }
+    setTimeout(function(){autosave();},5*1000);
+}
 function save(type) {
     var content = "";
     if ($("#raw-html").hasClass('active'))

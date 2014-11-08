@@ -188,6 +188,9 @@
                         Back to List
                     </span>
                 </a>
+                <div id="auto-save-info">
+                    
+                </div>
             </div>
             <div class="btn-group pull-right">
                 <button class="btn btn-success" onclick="save('{{poem_type}}');">
@@ -205,7 +208,7 @@
                 </button>
                 {% if poem_type == "draft" %}
                 <button class="btn btn-success" onclick="publish();">
-                    Preview
+                    Publish
                 </button>
                 {% elif poem_type == "poem" %}
                 <button class="btn btn-default" onclick="unpublish();">
@@ -251,6 +254,7 @@
         initToolbarBootstrapBindings();  
         $('#editor').wysiwyg({ fileUploadError: showErrorAlert} );
         window.prettyPrint && prettyPrint();
+        autosave();
     });
 </script>
 {% end %}
