@@ -10,7 +10,7 @@
 {% end %}
 
 {% block content %}
-<div class="navbar ds-admin-navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+<div class="navbar ds-navbar ds-admin-navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
@@ -53,18 +53,32 @@
 <div class="container">
     <div class="">
         <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="panel panel-default ds-panel">
+                    <div class="panel-heading panel-link">
+                        <a href="/admin/create">
+                            <div class="row">
+                                <div class="col-xs-12 vcenter">
+                                    <h3 class="ds-panel-heading"><b>Create</b></h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="panel-body">
+                        Start a new draft<!--
+                        --><a role="button" href="/admin/create" class="btn btn-success pull-right">Create</a>
+                    </div>
+                </div>
+            </div>
             {% for collection_title,collection,has_more in [("Drafts",drafts,more_drafts),("Poems",poems,more_poems)] %}
             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                 <div class="panel panel-default ds-panel">
                     <!-- Default panel contents -->
                     <div class="panel-heading panel-link">
-                        <a href="/admin/list/{{collection_title.lower()}}" class>
+                        <a href="/admin/list/{{collection_title.lower()}}">
                             <div class="row">
-                                <div class="col-xs-6 vcenter">
+                                <div class="col-xs-12 vcenter">
                                     <h3 class="ds-panel-heading"><b>{{collection_title}}</b></h3>
-                                </div><!--
-                                --><div class="col-xs-6 vcenter">
-                                    <a role="button" href="/admin/create" class="btn btn-success pull-right">Create</a>
                                 </div>
                             </div>
                         </a>

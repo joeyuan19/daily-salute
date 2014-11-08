@@ -314,7 +314,6 @@ def insert(poem,without_assignment=False):
 def _insert(cur,poem,without_assignment=False):
     if not without_assignment:
         poem.poem_id = getMaxID()+1
-    print poem.getData()
     cur.execute("""
     INSERT INTO poems VALUES (%s,%s,%s,%s)
     """,(poem.poem_id,poem.title,poem.creation_date,poem.poem))
@@ -438,7 +437,7 @@ def _getMaxID(cur):
 def getMaxDraftID():
     try:
         _id = execute(_getMaxDraftID)[0]
-        if _id is None or _id > 0:
+        if _id is None:
             return 0
         return _id
     except IndexError:
