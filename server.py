@@ -15,7 +15,7 @@ from tornado.options import define, options
 from db import Poem, User, Content
 from helper import avoid_incomplete_tag
 
-DEBUG = True
+DEBUG = False
 
 def page_range(p,p0,pm,d):
     return max(p0,(p-d)+min(0,pm-(p+d))),min(pm,(p+d)+max(0,p0-(p-d)))
@@ -23,7 +23,7 @@ def page_range(p,p0,pm,d):
 def time_now():
     return datetime.datetime.now().strftime("%M/%D/%Y %H:%M:%S")
 
-def write_error(err):
+def write_err(err):
     with open('err.log','a') as f:
         f.write(time_now()+" > "+err+"\n\n")
 
@@ -72,7 +72,7 @@ def get_poem(poem_id):
         poem = Poem.load(poem_id).getData()
         return poem
     except:
-        write_error(traceback.format_exc())
+        write_err(traceback.format_exc())
         return None
 
 def get_draft(poem_id):
@@ -80,7 +80,7 @@ def get_draft(poem_id):
         poem = Poem.load_draft(poem_id).getData()
         return poem
     except:
-        write_error(traceback.format_exc())
+        write_err(traceback.format_exc())
         return None
 
 def load_page_vars(poem_id):
@@ -161,11 +161,11 @@ class PoemHandler(BaseHandler):
             if poem_id < 1:
                 self.redirect('/poem/1')
                 return
-            opts = load_page_vars(pogetMaxID())
+            opts = load_page_vars(poem_id)
             opts['is_front_page'] = False
             self.render('index.html',**opts)
         except:
-            write_error(traceback.format_exc())
+            write_err(traceback.format_exc())
             self.redirect('/')
 
 class RandomPoemHandler(BaseHandler):
@@ -388,7 +388,7 @@ class AuthLoginHandler(AuthenticatedHandler):
             if self.get_argument("from_logout",default=False):
                 opts["alert"] = "logout"
         except tornado.web.MissingArgumentError:
-            write_error(traceback.format_exc())
+            write_err(traceback.format_exc())
         self.render('login.html',**opts)
 
     def post(self):
