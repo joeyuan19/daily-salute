@@ -114,10 +114,6 @@ class AdminBaseHandler(tornado.web.RequestHandler):
         else:
             self.render('errors/admin_other.html')
 
-class IndexHandler(BaseHandler):
-    def get(self):
-        self.render('index.html',**load_page_vars(Poem.getMaxID()))
-
 class CollageHandler(BaseHandler):
     def get(self):
         self.render('test/collage.html')
@@ -165,8 +161,8 @@ class PoemHandler(BaseHandler):
             if poem_id < 1:
                 self.redirect('/poem/1')
                 return
-            opts = load_page_vars(poem_id)
-            opts['is_front_page'] = poem_id == Poem.getMaxID()
+            opts = load_page_vars(pogetMaxID())
+            opts['is_front_page'] = False
             self.render('index.html',**opts)
         except:
             write_error(traceback.format_exc())
@@ -176,6 +172,12 @@ class RandomPoemHandler(BaseHandler):
     def get(self):
         rand_poem = int(round(1. + (Poem.getMaxID()-1)*random.random()))
         self.redirect('/poem/'+str(rand_poem))
+
+class IndexHandler(BaseHandler):
+    def get(self):
+        opts = load_page_vars(Poem.getMaxID())
+        opts['is_front_page'] = True
+        self.render('index.html',**opts)
 
 class ArchiveHandler(BaseHandler):
     def get(self,page):
