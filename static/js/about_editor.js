@@ -26,10 +26,12 @@ function save() {
 }
 function toggleRawHTML() {
     if ($("#raw-html").hasClass('active')) {
+        $("editor-btn").removeClass('disabled');
         $("#raw-html").removeClass('active btn-primary');
         $("#raw-html").addClass('btn-default');
         $("#editor").html($("#editor").text());
     } else {
+        $("editor-btn").addClass('disabled');
         $("#raw-html").addClass('active btn-primary');
         $("#raw-html").removeClass('btn-default');
         $("#editor").text($("#editor").cleanHtml());
