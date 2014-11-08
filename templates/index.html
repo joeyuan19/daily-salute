@@ -2,13 +2,17 @@
 {% block title %}{{poem_title}} || {% end %}
 {% block description %}{% end %}
 {% block meta %}
+{% if is_front page %}
+<meta property="og:url" content="http://www.dailysalute.org/" /> 
+<meta property="og:title" content="Daily Salute" />
+{% else %}
 <meta property="og:url" content="http://www.dailysalute.org/poem/{{poem_id}}" /> 
 <meta property="og:title" content="{{poem_title}} || Daily Salute" />
+{% end %}
 <meta property="og:description" content="Daily poetry by Jillian Entenman" /> 
-<meta property="og:image" content="http://www.dailysalute.org/static/img/collage/collage{{poem_id}}.jpg" /> 
+<meta property="og:image" content="http://www.dailysalute.org/static/img/logo.jpg" /> 
 <meta property="og:type" content="website" /> 
 <meta property="og:site_name" content="Daily Salute" /> 
-{% end %}
 {% block content %}
 <div id="fb-root"></div>
 <script>(function(d, s, id) {

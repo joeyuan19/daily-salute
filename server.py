@@ -165,7 +165,9 @@ class PoemHandler(BaseHandler):
             if poem_id < 1:
                 self.redirect('/poem/1')
                 return
-            self.render('index.html',**load_page_vars(poem_id))
+            opts = load_page_vars(poem_id)
+            opts['is_front_page'] = poem_id == Poem.getMaxID()
+            self.render('index.html',**opts)
         except:
             write_error(traceback.format_exc())
             self.redirect('/')
