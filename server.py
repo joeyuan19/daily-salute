@@ -260,14 +260,13 @@ class AdminCreateHandler(AuthenticatedHandler):
     @tornado.web.authenticated
     def get(self):
         draft = Poem.new()
-        print draft.poem_id
         draft.save()
-        print draft.poem_id
         self.redirect('/admin/edit/draft/'+str(draft.poem_id))
 
 class AdminEditHandler(AuthenticatedHandler):
     @tornado.web.authenticated
     def get(self,_type,poem_id):
+        print "req",poem_id
         if _type == "draft":
             poem = get_draft(poem_id)
             if poem is None:
@@ -283,6 +282,7 @@ class AdminEditHandler(AuthenticatedHandler):
 
     @tornado.web.authenticated
     def post(self,_type,poem_id):
+        print "req",poem_id
         poem_id = int(poem_id)
         _json = {
             "poem":self.get_argument("poem"),
