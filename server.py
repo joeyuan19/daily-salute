@@ -15,7 +15,7 @@ from tornado.options import define, options
 from db import Poem, User, Content
 from helper import avoid_incomplete_tag
 
-DEBUG = False
+DEBUG = True
 
 def page_range(p,p0,pm,d):
     return max(p0,(p-d)+min(0,pm-(p+d))),min(pm,(p+d)+max(0,p0-(p-d)))
@@ -266,7 +266,7 @@ class AdminCreateHandler(AuthenticatedHandler):
 class AdminEditHandler(AuthenticatedHandler):
     @tornado.web.authenticated
     def get(self,_type,poem_id):
-        print "req",poem_id
+        print "GET req",poem_id
         if _type == "draft":
             poem = get_draft(poem_id)
             if poem is None:
@@ -277,12 +277,15 @@ class AdminEditHandler(AuthenticatedHandler):
                 self.redirect('/admin/list/drafts')
         else:
             self.redirect('/admin/list/poems')
-        poem['page_no'] = (Poem.getMaxID() - poem['poem_id'])/10 + 1
+        if _type == 'poem':
+            poem['page_no'] = (Poem.getMaxID() - poem['poem_id'])/10 + 1
+        elif _type == 'draft':
+            poem['page_no'] = (Poem.getMaxDraftID() - poem['poem_id'])/10 + 1
         self.render('edit.html',**poem)
 
     @tornado.web.authenticated
     def post(self,_type,poem_id):
-        print "req",poem_id
+        print "POST req",poem_id
         poem_id = int(poem_id)
         _json = {
             "poem":self.get_argument("poem"),
@@ -297,6 +300,8 @@ class AdminEditHandler(AuthenticatedHandler):
         elif _json["type"] == "poem":
             msg = "Poem saved " + datetime.datetime.now().strftime("%H:%M  %m/%d/%Y")
         status = "success"
+        print _type
+        print _json["type"]
         if _type == _json["type"]:
             self.set_header("Content-Type","application/json")
             self.write(json.dumps({"status":status,"msg":msg}))

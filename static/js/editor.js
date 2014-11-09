@@ -15,10 +15,10 @@ function preview() {
 }
 
 function publish() {
-    save("poem");
+    _save("poem");
 }
 function unpublish() {
-    save("draft");
+    _save("draft");
 }
 function promptDelete() {
     $("#delete-modal").modal();
@@ -36,29 +36,7 @@ function toggleRawHTML() {
         $("#editor").text($("#editor").cleanHtml());
     }
 }
-function save() {
-    var type;
-    if (window.location.href.indexOf("poem") > 0) {
-        type = "poem";
-    } else {
-        type = "draft";
-    }
-    save(type);
-}
-function autosave() {
-    console.log("Autosave");
-    var content = $("#editor").cleanHtml();
-    if (window.lastState===content || content.length === 0) {
-        // pass
-    } else {
-        save();
-        window.lastState = $("#editor").cleanHtml();
-        var time = new Date();
-        $("#auto-save-info").text("Autosaved at "+time.getHours()+":"+time.getMinutes()+":"+time.getSeconds()+" "+time.getMonth()+"/"+time.getDay()+"/"+time.getFullYear());
-    }
-    setTimeout(function(){autosave();},5*1000);
-}
-function save(type) {
+function _save(type) {
     var content = "";
     if ($("#raw-html").hasClass('active'))
         content = $.parseHTML($("#editor").cleanHtml())[0].wholeText;
@@ -71,6 +49,7 @@ function save(type) {
         "date":$("#poem-date").val(),
         "type":type
     }
+    console.log(type);
     jQuery.postJSON(window.location.href,poem,function (response) {
         response = eval("("+response+")");
         if (response.status === "success") {
@@ -115,3 +94,31 @@ jQuery.postJSON = function(url, args, callback) {
         }
     });
 };
+function save() {
+    var type;
+    if (window.location.href.indexOf("poem") > 0) {
+        type = "poem";
+    } else {
+        type = "draft";
+    }
+    _save(type);
+}
+function autosave() {
+    var content = $("#editor").cleanHtml();
+    if (window.lastState===content || content.length === 0) {
+        // pass
+    } else {
+        save();
+        window.lastState = content; 
+        $("#auto-save-info").text("Autosaved at " + timestamp());
+    }
+    setTimeout(function(){autosave();},10*1000);
+}
+function timestamp() {
+    var time = new Date();
+    var s = time.getSeconds()+"";
+    if (s.length < 2) {
+        s = "0"+s;
+    }
+    return time.getHours()+":"+time.getMinutes()+":"+s+" "+time.getMonth()+"/"+time.getDay()+"/"+time.getFullYear();
+}
