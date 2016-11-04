@@ -69,6 +69,7 @@ def load_cookie_secret():
 
 def get_poem(poem_id):
     try:
+        poem_id = str(poem_id)  
         if poem_id.isdigit():
             poem = Poem.load(poem_id).getData()
         else:
