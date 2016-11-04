@@ -86,7 +86,7 @@ class Poem(object):
             'poem_date':self.creation_date,
             'poem_content':self.poem,
             'poem_type':self._type,
-            'poem_preview':self.get_preview()
+            'poem_preview':self.get_preview(),
         }
     
     def __init__(self,title,creation_date,poem,_type,new=True,poem_id=0):

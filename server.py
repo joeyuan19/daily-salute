@@ -69,7 +69,10 @@ def load_cookie_secret():
 
 def get_poem(poem_id):
     try:
-        poem = Poem.load(poem_id).getData()
+        if poem_id.isdigit():
+            poem = Poem.load(poem_id).getData()
+        else:
+            return None
         return poem
     except:
         write_err(traceback.format_exc())
@@ -77,7 +80,10 @@ def get_poem(poem_id):
 
 def get_draft(poem_id):
     try:
-        poem = Poem.load_draft(poem_id).getData()
+        if poem_id.isdigit():
+            poem = Poem.load_draft(poem_id).getData()
+        else:
+            return None
         return poem
     except:
         write_err(traceback.format_exc())
@@ -93,11 +99,11 @@ def load_page_vars(poem_id):
     else:
         next_page = poem_id + 1
     poem = get_poem(poem_id)
-    if len(poem['poem_title']) == 0:
+    if poem is not None and len(poem['poem_title']) == 0:
         poem['poem_title'] = poem['poem_date']
         poem['poem_date'] = ''
-    poem['prev_page'] = prev_page
-    poem['next_page'] = next_page
+        poem['prev_page'] = prev_page
+        poem['next_page'] = next_page
     return poem 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -141,7 +147,6 @@ class CollageAjaxHandler(BaseHandler):
                 'msg':traceback.format_exc()
             }))
 
-
 class ErrorHandler(BaseHandler):
     def get(self):
         self.render('errors/404.html')
@@ -150,6 +155,36 @@ class AdminErrorHandler(AdminBaseHandler):
     @tornado.web.authenticated
     def get(self):
         self.render('errors/admin_404.html')
+
+class APIHandler(BaseHandler):
+    def get(self,_type,poem_id):
+        print dir(self) 
+        if _type == 'poem':
+            poem = get_poem(poem_id)
+            if poem is None:
+                self.write({
+                    'status': 'failed',
+                    'reason': 'Poem not found'
+                })
+            else:
+                poem['status'] = 'success'
+                self.write(json.dumps(poem))
+        if _type == 'latest':
+            poem = Poem.load(Poem.getMaxID()).getData()
+            if poem is None:
+                self.write({
+                    'status': 'failed',
+                    'reason': 'Poem not found'
+                })
+            else:
+                poem['status'] = 'success'
+                self.write(json.dumps(poem))
+        else:
+            self.write({
+                'status': 'failed',
+                'reason': 'Bad URL'
+            })
+
 
 class PoemHandler(BaseHandler):
     def get(self,poem_id):
@@ -175,6 +210,7 @@ class RandomPoemHandler(BaseHandler):
 
 class IndexHandler(BaseHandler):
     def get(self):
+        print Poem.getMaxID()
         opts = load_page_vars(Poem.getMaxID())
         opts['is_front_page'] = True
         self.render('index.html',**opts)
@@ -470,6 +506,7 @@ if __name__ == "__main__":
             (r'/poem/([0-9]+)', PoemHandler),
             (r'/', IndexHandler),
             (r'/admin/.*',AdminErrorHandler),
+            (r'/api/([a-zA-Z]+)/([0-9]+)',APIHandler),
             (r'.*',ErrorHandler)
         ], **app_settings
     )
