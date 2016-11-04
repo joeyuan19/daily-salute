@@ -103,8 +103,8 @@ def load_page_vars(poem_id):
     if poem is not None and len(poem['poem_title']) == 0:
         poem['poem_title'] = poem['poem_date']
         poem['poem_date'] = ''
-        poem['prev_page'] = prev_page
-        poem['next_page'] = next_page
+    poem['prev_page'] = prev_page
+    poem['next_page'] = next_page
     return poem 
 
 class BaseHandler(tornado.web.RequestHandler):
@@ -157,34 +157,31 @@ class AdminErrorHandler(AdminBaseHandler):
     def get(self):
         self.render('errors/admin_404.html')
 
-class APIHandler(BaseHandler):
-    def get(self,_type,poem_id):
-        print dir(self) 
-        if _type == 'poem':
-            poem = get_poem(poem_id)
-            if poem is None:
-                self.write({
-                    'status': 'failed',
-                    'reason': 'Poem not found'
-                })
-            else:
-                poem['status'] = 'success'
-                self.write(json.dumps(poem))
-        if _type == 'latest':
-            poem = Poem.load(Poem.getMaxID()).getData()
-            if poem is None:
-                self.write({
-                    'status': 'failed',
-                    'reason': 'Poem not found'
-                })
-            else:
-                poem['status'] = 'success'
-                self.write(json.dumps(poem))
-        else:
-            self.write({
+class APIHandlerLatest(BaseHandler):
+    def get(self):        
+        print dir(self.request)
+        print self.request.headers
+        poem = Poem.load(Poem.getMaxID()).getData()
+        if poem is None:
+            self.write(json.dumps({
                 'status': 'failed',
-                'reason': 'Bad URL'
-            })
+                'reason': 'Poem not found'
+            }))
+        else:
+            poem['status'] = 'success'
+            self.write(json.dumps(poem))
+    
+class APIHandlerPoem(BaseHandler):
+    def get(self,poem_id):
+        poem = get_poem(poem_id)
+        if poem is None:
+            self.write(json.dumps({
+                'status': 'failed',
+                'reason': 'Poem not found'
+            }))
+        else:
+            poem['status'] = 'success'
+            self.write(json.dumps(poem))
 
 
 class PoemHandler(BaseHandler):
@@ -507,7 +504,8 @@ if __name__ == "__main__":
             (r'/poem/([0-9]+)', PoemHandler),
             (r'/', IndexHandler),
             (r'/admin/.*',AdminErrorHandler),
-            (r'/api/([a-zA-Z]+)/([0-9]+)',APIHandler),
+            (r'/api/poem/([0-9]+)',APIHandlerPoem),
+            (r'/api/latest',APIHandlerLatest),
             (r'.*',ErrorHandler)
         ], **app_settings
     )
