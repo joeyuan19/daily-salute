@@ -7,6 +7,7 @@
 <link href="/static/css/admin.css" rel="stylesheet"/>
 <link href="/static/css/editor.css" rel="stylesheet"/>
 {% end %}        
+
 {% block header_scripts %}
 <script src="/static/external/jquery.hotkeys.js"></script>
 <script src="/static/external/google-code-prettify/prettify.js"></script>
@@ -105,12 +106,16 @@
     <div class="row">
         <div class="input-group">
             <label for="poem-title" class="input-group-addon">Title</label>
-            <input id="poem-title" type="text" class="col-sm-10 col-md-10 col-lg-10 form-control" placeholder="If blank, title defaults to the date" value="{{ poem_title }}">
+            <input id="poem-title" type="text" class="col-sm-10 col-md-10 col-lg-10 form-control" placeholder="If blank, title defaults to the date" value="{{ poem_title }}"/>
         </div>
         <br>
         <div class="input-group">
             <label for="poem-date" class="input-group-addon">Date</label>
             <input id="poem-date" type="text" class="form-control" placeholder="Poem Date" value="{{ poem_date }}"/>
+        </div>
+        <br>
+        <div class="input-group">
+            <a id="poem-image-status" class="btn btn-{% if image_status %}success{% else %}info{% end %}" href="/admin/upload_image/{{poem_type}}/{{ poem_id }}">{% if image_status %}Change image{% else %}Upload image{% end %}</a>
         </div>
         <br>
         <div class="input-group">
@@ -163,7 +168,7 @@
                     <a class="btn btn-default" data-edit="redo" title="Redo (Ctrl/Cmd+Y)"><i class="fa fa-repeat"></i></a>
                 </div>
                 <div class="btn-group">
-                    <button id="raw-html" class="btn btn-default" title="Raw HTML" onclick="toggleRawHTML()"><i class="fa fa-code"></i></button>
+                    <button id="raw-html" class="btn btn-default" title="Raw HTML" href="/"><i class="fa fa-code"></i></button>
                 </div>
             </div>
             <br>
@@ -193,15 +198,9 @@
                 <div id="auto-save-info"></div>
             </div>
             <div class="btn-group pull-right">
-                <button class="btn btn-success" onclick="save('{{poem_type}}');">
-                    <span class="glyphicon glyphicon-floppy-save visible-xs-inline"></span>
-                    <span class="hidden-xs">
-                    {% if poem_type == "draft" %}
-                        Save as draft
-                    {% else %}
-                        Save
-                    {% end %}
-                    </span>
+                <button class="btn btn-danger" onclick="promptDelete()">
+                    <span class="glyphicon glyphicon-trash visible-xs-inline"></span>
+                    <span class="hidden-xs">Delete</span>
                 </button>
                 <button class="btn btn-default" onclick="preview();">
                     Preview
@@ -215,9 +214,15 @@
                     Unpublish
                 </button>
                 {% end %}
-                <button class="btn btn-danger" onclick="promptDelete()">
-                    <span class="glyphicon glyphicon-trash visible-xs-inline"></span>
-                    <span class="hidden-xs">Delete</span>
+                <button class="btn btn-success" onclick="save('{{poem_type}}');">
+                    <span class="glyphicon glyphicon-floppy-save visible-xs-inline"></span>
+                    <span class="hidden-xs">
+                    {% if poem_type == "draft" %}
+                        Save as draft
+                    {% else %}
+                        Save
+                    {% end %}
+                    </span>
                 </button>
             </div>
             <br><br><br>

@@ -69,12 +69,11 @@ def load_cookie_secret():
 
 def get_poem(poem_id):
     try:
-        poem_id = str(poem_id)  
+        poem_id = str(poem_id)
         if poem_id.isdigit():
-            poem = Poem.load(poem_id).getData()
+            return Poem.load(poem_id).getData()
         else:
             return None
-        return poem
     except:
         write_err(traceback.format_exc())
         return None
@@ -82,10 +81,9 @@ def get_poem(poem_id):
 def get_draft(poem_id):
     try:
         if poem_id.isdigit():
-            poem = Poem.load_draft(poem_id).getData()
+            return Poem.load_draft(poem_id).getData()
         else:
             return None
-        return poem
     except:
         write_err(traceback.format_exc())
         return None
@@ -159,8 +157,6 @@ class AdminErrorHandler(AdminBaseHandler):
 
 class APIHandlerLatest(BaseHandler):
     def get(self):        
-        print dir(self.request)
-        print self.request.headers
         poem = Poem.load(Poem.getMaxID()).getData()
         if poem is None:
             self.write(json.dumps({
@@ -283,7 +279,9 @@ class AboutHandler(AuthenticatedHandler):
     def get(self):
         opts = {'about':Content.getAbout()}
         self.render('about.html',**opts)
-    
+
+
+
 class AdminHandler(AuthenticatedHandler):
     @tornado.web.authenticated
     def get(self):
@@ -304,18 +302,21 @@ class AdminEditHandler(AuthenticatedHandler):
         if _type == "draft":
             poem = get_draft(poem_id)
             if poem is None:
-                self.redirect('/admin/list/poems')
+                self.redirect('/admin/list/drafts')
+            else:
+                poem['poem_image_uploaded'] = poem['image_url'] is not None
+                poem['page_no'] = (Poem.getMaxDraftID() - poem['poem_id'])/10 + 1
+                self.render('edit.html',**poem)
         elif _type == "poem":
             poem = get_poem(poem_id)
             if poem is None:
-                self.redirect('/admin/list/drafts')
+                self.redirect('/admin/list/poems')
+            else:
+                poem['poem_image_uploaded'] = poem['image_url'] is not None
+                poem['page_no'] = (Poem.getMaxID() - poem['poem_id'])/10 + 1
+                self.render('edit.html',**poem)
         else:
             self.redirect('/admin/list/poems')
-        if _type == 'poem':
-            poem['page_no'] = (Poem.getMaxID() - poem['poem_id'])/10 + 1
-        elif _type == 'draft':
-            poem['page_no'] = (Poem.getMaxDraftID() - poem['poem_id'])/10 + 1
-        self.render('edit.html',**poem)
 
     @tornado.web.authenticated
     def post(self,_type,poem_id):
@@ -326,16 +327,15 @@ class AdminEditHandler(AuthenticatedHandler):
             "date":self.get_argument("date"),
             "title":self.get_argument("title"),
             "type":self.get_argument("type"),
+            "image":"/img/"+self.get_argument("image")
         }
-        p = Poem(_json["title"],_json["date"],_json["poem"],_type,new=False,poem_id=poem_id)
+        p = Poem(_json["title"],_json["date"],_json["poem"],_json["image"],_type,new=False,poem_id=poem_id)
         p.save(_json["type"])
         if _json["type"] == "draft":
             msg = "Poem saved as draft " + datetime.datetime.now().strftime("%H:%M  %m/%d/%Y")
         elif _json["type"] == "poem":
             msg = "Poem saved " + datetime.datetime.now().strftime("%H:%M  %m/%d/%Y")
         status = "success"
-        print _type
-        print _json["type"]
         if _type == _json["type"]:
             self.set_header("Content-Type","application/json")
             self.write(json.dumps({"status":status,"msg":msg}))
@@ -352,6 +352,18 @@ class AdminEditHandler(AuthenticatedHandler):
             self. write(json.dumps({"status":"success"}))
         else:
             self.write(json.dumps({"status":"failed"}))
+
+class AdminImageUploadHandler(AuthenticatedHandler):
+    @tornado.web.authenticated
+    def get(self,_type,poem_id):
+        if _type == "poem":
+            poem = get_poem(poem_id)
+        elif _type == "poem":
+            poem = get_draft(poem_id)
+        if poem is None:
+            self.redirect('/admin/edit/'+poem_id+'?error=')
+        else:
+            self.render('image_upload.html',**poem)
 
 class AdminEditAboutHandler(AuthenticatedHandler):
     @tornado.web.authenticated
@@ -492,6 +504,7 @@ if __name__ == "__main__":
             (r'/auth/logout',AuthLogoutHandler),
             (r'/admin/edit/about',AdminEditAboutHandler),
             (r'/admin/edit/([a-zA-Z]+)/([0-9]+)',AdminEditHandler),
+            (r'/admin/upload_image/([a-zA-Z]+)/([0-9]+)',AdminImageUploadHandler),
             (r'/admin/list/([a-zA-Z]+)(?:/([0-9]+))?',AdminListHandler),
             (r'/admin/create',AdminCreateHandler),
             (r'/admin/manage/(.*)',AdminManageHandler),

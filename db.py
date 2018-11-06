@@ -16,14 +16,15 @@ class Poem(object):
         poem = pull_poem(poem_id)
         if poem is None:
             raise PoemNotFoundException("Poem " + str(poem_id) + " Not found")
-        return cls(poem[1],poem[2],poem[3],new=False,_type="poem",poem_id=poem[0])
+        return cls(poem[1],poem[2],poem[3],poem[4],"poem",new=False,poem_id=poem[0])
 
     @classmethod
     def load_draft(cls,poem_id):
         poem = pull_draft(poem_id)
         if poem is None:
             raise PoemNotFoundException("Draft " + str(poem_id) + " Not found")
-        return cls(poem[1],poem[2],poem[3],new=False,_type="draft",poem_id=poem[0])
+        print poem
+        return cls(poem[1],poem[2],poem[3],poem[4],"draft",new=False,poem_id=poem[0])
 
     @classmethod
     def getMaxID(cls):
@@ -87,14 +88,17 @@ class Poem(object):
             'poem_content':self.poem,
             'poem_type':self._type,
             'poem_preview':self.get_preview(),
+            'image_url':self.image_url if self.image_url is not None else 'blank.gif',
+            'image_status':self.image_url is not None,
         }
     
-    def __init__(self,title,creation_date,poem,_type,new=True,poem_id=0):
+    def __init__(self,title,creation_date,poem,poem_image_url,_type,new=True,poem_id=0):
         self.new = new
         self.poem_id = poem_id
         self.title = title
         self.creation_date = creation_date
         self.poem = poem
+        self.image_url = poem_image_url
         self._type = _type
 
     def get_preview(self):
@@ -152,6 +156,7 @@ def _reset_drafts(cur):
     cur.execute("""
     DR#OP TABLE drafts
     """)
+
 def reset_content():
     execute(_reset_content)
     init_content()

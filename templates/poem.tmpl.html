@@ -15,7 +15,12 @@
             </div>
         </div>
     </div>
-    <div class="panel-body ds-poem-body">
-        {% raw poem_content %}
+    <div class="panel-body ds-poem-content">
+        <div class="panel-body ds-poem-image">
+            <img src="{{poem_image_url}}"/>
+        </div>
+        <div class="panel-body ds-poem-body">
+            {% raw poem_content %}
+        </div>
     </div>
 </div>

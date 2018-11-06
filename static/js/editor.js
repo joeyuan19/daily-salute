@@ -122,3 +122,7 @@ function timestamp() {
     }
     return time.getHours()+":"+time.getMinutes()+":"+s+" "+time.getMonth()+"/"+time.getDay()+"/"+time.getFullYear();
 }
+
+function submitButton(enabled) {
+}
+
